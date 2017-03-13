@@ -1,0 +1,116 @@
+= Grails: Rodando duas aplicações na mesma instância do Tomcat em subdomínios diferentes
+:hp-tags: desenvolvimento, infraestrutura, grails, banco de código
+:published_at: 2015-06-10
+
+Recentemente precisei fazer deploy de duas aplicações Grails na mesma instância do Tomcat. Tudo seria simples, se não fosse o fato de que cada aplicação seria acessada pelo seu próprio subdomínio, e que a URL deveria ser algo parecido com http://aplicacao1.meudominio.com/controller/id
+
+A princípio, basta configurar o servidor web Apache com o módulo mod_proxy configurado corretamente que tudo está resolvido. Porém, o Tomcat em sua configuração default adiciona o contexto de cada aplicação na URL que está sendo acessada. Como fazer então para que cada aplicação tenha seu subdomínio exclusivo?
+
+A solução me tomou bastante tempo de pesquisa e testes baseados em tentativa e erro. Segue aqui a forma como consegui resolver meu problema.
+
+Primeiro de tudo, precisei alterar o arquivo `server.xml` do Tomcat e fazer algumas alterações: Adicionar um novo Service, criar um Connector, definir uma Engine e um Host. Ficou mais ou menos assim (vou ocultar algumas partes do arquivo por não ser o foco):
+
+[source,xml]
+----
+<Server ...>
+    ...
+    <Service name="aplicacao1">
+        <Connector port="8081" protocol="HTTP/1.1"
+            connectionTimeout="20000"
+            redirectPort="8444"
+            proxyName="aplicacao1.meudominio.com"
+            proxyPort="80" />
+        <Engine name="aplicacao1" defaultHost="aplicacao1">
+            <Host name="aplicacao1" appBase="aplicacao1" unpackWARs="true" autoDeploy="true">
+            </Host>
+        </Engine>
+    </Service>
+    
+    <Service name="aplicacao2">
+        <Connector port="8082" protocol="HTTP/1.1"
+            connectionTimeout="20000"
+            redirectPort="8445"
+            proxyName="aplicacao2.meudominio.com"
+            proxyPort="80" />
+        <Engine name="aplicacao2" defaultHost="aplicacao2">
+            <Host name="aplicacao2" appBase="aplicacao2" unpackWARs="true" autoDeploy="true">
+            </Host>
+        </Engine>
+    </Service>
+    
+    <Service name="Catalina">
+        <Connector port="8080" protocol="HTTP/1.1"
+            connectionTimeout="20000"
+            URIEncoding="UTF-8"
+            redirectPort="8443" />
+            ... (aqui são as configurações default do Tomcat)
+        </Service>
+</Server>
+----
+
+Depois de fazer essa configuração, dentro da pasta do Tomcat, criei as pastas aplicacao1 e aplicacao2, no mesmo nível em que a pasta webapps está. Também é preciso dar permissão 775 e mudar o proprietário dessas pastas para o usuário tomcat7.
+
+[source,bash]
+----
+# mkdir aplicacao1
+# mkdir aplicacao2
+# chmod 775 aplicacao1
+# chmod 775 aplicacao2
+# chown tomcat7 aplicacao1
+# chown tomcat7 aplicacao2
+----
+
+Vai ficar mais ou menos assim:
+
+image::tomcat-folders.JPG[]
+
+Depois, eu copiei os WARs pra dentro da sua respectiva pasta e renomeei eles pra `ROOT.war`. Por fim, fiz as alterações no Apache para que o proxy redirecione corretamente as requisições:
+
+[source,xml]
+----
+<VirtualHost *:80>
+    ServerName aplicacao1.meudominio.com
+    ServerAlias aplicacao1.meudominio.com
+    
+    ProxyRequests Off
+    
+    ErrorLog /var/log/apache2/error-aplicacao1.log
+    
+    <Directory proxy:http://aplicacao1.meudominio.com:80>
+        Order Allow,Deny
+        Allow from all
+    </Directory>
+    
+    <Proxy aplicacao1.meudominio.com:80>
+        Order deny,allow
+        Allow from all
+    </Proxy>
+    
+    ProxyPass / http://meudominio.com:8081/
+    ProxyPassReverse / http://meudominio.com:8081/
+</VirtualHost>
+
+<VirtualHost *:80>
+    ServerName aplicacao2.meudominio.com
+    ServerAlias aplicacao2.meudominio.com
+    
+    ProxyRequests Off
+    
+    ErrorLog /var/log/apache2/error-aplicacao2.log
+    
+    <Directory proxy:http://aplicacao2.meudominio.com:80>
+        Order Allow,Deny
+        Allow from all
+    </Directory>
+    
+    <Proxy aplicacao2.meudominio.com:80>
+        Order deny,allow
+        Allow from all
+    </Proxy>
+    
+    ProxyPass / http://meudominio.com:8082/
+    ProxyPassReverse / http://meudominio.com:8082/
+</VirtualHost>
+----
+
+Depois é só reiniciar o Apache e o Tomcat e partir pro abraço!!

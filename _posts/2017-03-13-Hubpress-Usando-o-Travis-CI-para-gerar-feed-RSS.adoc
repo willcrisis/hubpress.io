@@ -1,5 +1,6 @@
 = Hubpress: Usando o Travis-CI para gerar feed RSS
 :hp-tags: hubpress, desenvolvimento, github, travis-ci, travis
+:published-at: 2015-10-23
 
 Assim que descobri a existência do http://hubpress.io[Hubpress], tive vontade imediata de migrar todo o conteúdo do meu site para ele, na intenção de centralizar minhas experiências todas no GitHub. Porém, logo de cara, percebi um grande problema: ele não gera o feed RSS dos artigos nativamente.
 

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>DigitalOcean: Hospedagem na nuvem de forma rápida e fácil</title>
+    <meta name="description" content="" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="http://www.willcrisis.com/favicon.ico">
+
+    <link rel="stylesheet" type="text/css" href="//www.willcrisis.com/themes/casper/assets/css/screen.css?v=1489412175610" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+
+    <link rel="canonical" href="http://www.willcrisis.com/2013/11/13/Digital-Ocean-Hospedagem-na-nuvem-de-forma-rapida-e-facil.html" />
+    <meta name="referrer" content="origin" />
+    
+    <meta property="og:site_name" content="Relatos de um Desenvolvedor Aventureiro" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="DigitalOcean: Hospedagem na nuvem de forma rápida e fácil" />
+    <meta property="og:description" content="Fala, pessoal! Quanto tempo, hein? 2 anos depois da última postagem, estou de volta! Muita coisa aconteceu nesse meio-tempo (muito-tempo, na verdade). Os próximos posts vão relatar as mudanças! Mas hoje, vamos falar um pouco de nuvem, esse assunto que anda tão na moda. Depois de pagar caro por hospedagens" />
+    <meta property="og:url" content="http://www.willcrisis.com/2013/11/13/Digital-Ocean-Hospedagem-na-nuvem-de-forma-rapida-e-facil.html" />
+    <meta property="article:published_time" content="2013-11-13T00:00:00.000Z" />
+    <meta property="article:tag" content="infraestrututra" />
+    <meta property="article:tag" content=" servidores" />
+    <meta property="article:tag" content=" desenvolvimento" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="DigitalOcean: Hospedagem na nuvem de forma rápida e fácil" />
+    <meta name="twitter:description" content="Fala, pessoal! Quanto tempo, hein? 2 anos depois da última postagem, estou de volta! Muita coisa aconteceu nesse meio-tempo (muito-tempo, na verdade). Os próximos posts vão relatar as mudanças! Mas hoje, vamos falar um pouco de nuvem, esse assunto que anda tão na moda. Depois de pagar caro por hospedagens" />
+    <meta name="twitter:url" content="http://www.willcrisis.com/2013/11/13/Digital-Ocean-Hospedagem-na-nuvem-de-forma-rapida-e-facil.html" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Relatos de um Desenvolvedor Aventureiro",
+    "author": {
+        "@type": "Person",
+        "name": "Willian Krause",
+        "image": "https://avatars1.githubusercontent.com/u/1250489?v=3",
+        "url": "http://www.willcrisis.com/author/willcrisis/",
+        "sameAs": "http://www.willcrisis.com"
+    },
+    "headline": "DigitalOcean: Hospedagem na nuvem de forma rápida e fácil",
+    "url": "http://www.willcrisis.com/2013/11/13/Digital-Ocean-Hospedagem-na-nuvem-de-forma-rapida-e-facil.html",
+    "datePublished": "2013-11-13T00:00:00.000Z",
+    "keywords": "infraestrututra,  servidores,  desenvolvimento",
+    "description": "Fala, pessoal! Quanto tempo, hein? 2 anos depois da última postagem, estou de volta! Muita coisa aconteceu nesse meio-tempo (muito-tempo, na verdade). Os próximos posts vão relatar as mudanças! Mas hoje, vamos falar um pouco de nuvem, esse assunto que anda tão na moda. Depois de pagar caro por hospedagens"
+}
+    </script>
+
+    <meta name="generator" content="HubPress" />
+    <link rel="alternate" type="application/rss+xml" title="Relatos de um Desenvolvedor Aventureiro" href="http://www.willcrisis.com/rss/" />
+</head>
+<body class="post-template tag-infraestrututra tag-servidores tag-desenvolvimento nav-closed">
+
+    
+
+    <div class="site-wrapper">
+
+        
+
+
+<header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        
+    </nav>
+</header>
+
+<main class="content" role="main">
+    <article class="post tag-infraestrututra tag-servidores tag-desenvolvimento">
+
+        <header class="post-header">
+            <h1 class="post-title">DigitalOcean: Hospedagem na nuvem de forma rápida e fácil</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2013-11-13">13 November 2013</time>  on <a href="http://www.willcrisis.com/tag/infraestrututra/">infraestrututra</a>, <a href="http://www.willcrisis.com/tag/servidores/"> servidores</a>, <a href="http://www.willcrisis.com/tag/desenvolvimento/"> desenvolvimento</a>
+            </section>
+        </header>
+
+        <section class="post-content">
+            <div class="paragraph">
+<p>Fala, pessoal! Quanto tempo, hein?</p>
+</div>
+<div class="paragraph">
+<p>2 anos depois da última postagem, estou de volta! Muita coisa aconteceu nesse meio-tempo (muito-tempo, na verdade). Os próximos posts vão relatar as mudanças!</p>
+</div>
+<div class="paragraph">
+<p>Mas hoje, vamos falar um pouco de nuvem, esse assunto que anda tão na moda.</p>
+</div>
+<div class="paragraph">
+<p>Depois de pagar caro por hospedagens de sites, sofrer com problemas de permissões de arquivos, FTPs lentos e outras coisas, decidi experimentar uma coisa diferente: servidores na nuvem.</p>
+</div>
+<div class="paragraph">
+<p>Uma das coisas que mais me deixava irritado nas hospedagens convencionais era quando eu fazia upload de um arquivo usando o Wordpress (ou o Joomla) e o mesmo era atribuído a um usuário que eu desconhecia. Dessa forma, eu ficava impossibilitado de editar, ou até mesmo de excluir esse arquivo. Tinha, então, que abrir um ticket pro suporte da hospedagem pedindo para excluírem o arquivo pra mim.</p>
+</div>
+<div class="paragraph">
+<p>Com um servidor na nuvem, esse problema não acontece: o servido é seu, então fica mais fácil de resolver esse tipo de situação. Também podemos criar o servidor do nosso jeito, instalando os aplicativos que precisarmos.</p>
+</div>
+<div class="paragraph">
+<p>Experimentei por um tempo o Amazon EC2, que por sinal é muito bom, possui algumas imagens de servidores pré-carregadas, é de fácil utilização e dá 1 ano grátis se o seu servidor estiver dentro do Free-Tier. Porém, quando subi um aplicativo Grails lá (aplicativo simples, sem muitos plugins nem operações complexas), o processamento e a memória dispararam e acabei pagando um valor um pouco alto.</p>
+</div>
+<div class="paragraph">
+<p>Foi aí que um amigo, o <a href="http://www.emilio2hd.com.br">Emílio</a>, falou sobre o <a href="https://www.digitalocean.com/?refcode=a8cd65b5d607">DigitalOcean</a>, um serviço que disponibiliza um servidor da mesma maneira que o Amazon EC2, porém com o custo fixo de 5 dólares por mês no plano básico.</p>
+</div>
+<div class="paragraph">
+<p>No começo fiquei meio receoso, pois nunca tinha ouvido falar no serviço, mas depois de algumas pesquisas na internet, vi que o mesmo é bem avaliado por muita gente.</p>
+</div>
+<div class="paragraph">
+<p>Arrisquei e fiz a conta. O servidor ficou disponível para mim em menos de 1 minuto, com Ubuntu 12.04 e acesso SSH imediato.</p>
+</div>
+<div class="paragraph">
+<p>É possível encontrar muito material e "HowTo"s na comunidade, o que faz com que seja muito fácil de se configurar o que for necessário.</p>
+</div>
+<div class="paragraph">
+<p>Venho brincando nesse servidor há alguns dias e, muito em breve, irei migrar o site e meus projetos pessoais para lá.</p>
+</div>
+<div class="paragraph">
+<p>Se estiver interessado, pode acessar por esse link e me garantir alguns créditos (o DigitalOcean trabalha com esquema de referências :D):</p>
+</div>
+<div class="paragraph">
+<p><a href="https://www.digitalocean.com/?refcode=a8cd65b5d607" class="bare">https://www.digitalocean.com/?refcode=a8cd65b5d607</a></p>
+</div>
+<div class="paragraph">
+<p>Se tiverem perguntas, dúvidas, sugestões, não hesitem em comentar!</p>
+</div>
+        </section>
+
+        <footer class="post-footer">
+
+
+            <figure class="author-image">
+                <a class="img" href="http://www.willcrisis.com/author/willcrisis/" style="background-image: url(https://avatars1.githubusercontent.com/u/1250489?v&#x3D;3)"><span class="hidden">Willian Krause's Picture</span></a>
+            </figure>
+
+            <section class="author">
+                <h4><a href="http://www.willcrisis.com/author/willcrisis/">Willian Krause</a></h4>
+
+                    <p>Read <a href="http://www.willcrisis.com/author/willcrisis/">more posts</a> by this author.</p>
+                <div class="author-meta">
+                    <span class="author-location icon-location">Goiania, GO, Brazil</span>
+                    <span class="author-link icon-link"><a href="http://www.willcrisis.com">http://www.willcrisis.com</a></span>
+                </div>
+            </section>
+
+
+            <section class="share">
+                <h4>Share this post</h4>
+                <a class="icon-twitter" href="https://twitter.com/intent/tweet?text=DigitalOcean%3A%20Hospedagem%20na%20nuvem%20de%20forma%20r%C3%A1pida%20e%20f%C3%A1cil&amp;url=http://www.willcrisis.com/2013/11/13/Digital-Ocean-Hospedagem-na-nuvem-de-forma-rapida-e-facil.html"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://www.willcrisis.com/2013/11/13/Digital-Ocean-Hospedagem-na-nuvem-de-forma-rapida-e-facil.html"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://www.willcrisis.com/2013/11/13/Digital-Ocean-Hospedagem-na-nuvem-de-forma-rapida-e-facil.html"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+
+        </footer>
+
+
+        <section class="post-comments">
+          <div id="disqus_thread"></div>
+          <script type="text/javascript">
+          var disqus_shortname = 'willcrisis-site'; // required: replace example with your forum shortname
+          /* * * DON'T EDIT BELOW THIS LINE * * */
+          (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </section>
+
+
+    </article>
+
+</main>
+
+<aside class="read-next">
+</aside>
+
+
+
+        <footer class="site-footer clearfix">
+            <section class="copyright"><a href="http://www.willcrisis.com">Relatos de um Desenvolvedor Aventureiro</a> &copy; 2017</section>
+            <section class="poweredby">Proudly published with <a href="http://hubpress.io">HubPress</a></section>
+        </footer>
+
+    </div>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js?v="></script> 
+      <script type="text/javascript">
+        jQuery( document ).ready(function() {
+          // change date with ago
+          jQuery('ago.ago').each(function(){
+            var element = jQuery(this).parent();
+            element.html( moment(element.text()).fromNow());
+          });
+        });
+
+        hljs.initHighlightingOnLoad();
+      </script>
+       
+    <script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+
+    <script type="text/javascript" src="//www.willcrisis.com/themes/casper/assets/js/jquery.fitvids.js?v=1489412175610"></script>
+    <script type="text/javascript" src="//www.willcrisis.com/themes/casper/assets/js/index.js?v=1489412175610"></script>
+
+</body>
+</html>

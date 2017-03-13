@@ -1,3 +1,47 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Relatos de um Desenvolvedor Aventureiro]]></title><description><![CDATA[Um blog por Willian Krause]]></description><link>http://www.willcrisis.com</link><image><url>https://raw.githubusercontent.com/willcrisis/willcrisis.github.io/master/images/cover/chessboard.jpg</url><title>Relatos de um Desenvolvedor Aventureiro</title><link>http://www.willcrisis.com</link></image><generator>RSS for Node</generator><lastBuildDate>Mon, 13 Mar 2017 13:34:00 GMT</lastBuildDate><atom:link href="http://www.willcrisis.com/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Teste]]></title><description><![CDATA[<div class="paragraph">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Relatos de um Desenvolvedor Aventureiro]]></title><description><![CDATA[Um blog por Willian Krause]]></description><link>http://www.willcrisis.com</link><image><url>https://raw.githubusercontent.com/willcrisis/willcrisis.github.io/master/images/cover/chessboard.jpg</url><title>Relatos de um Desenvolvedor Aventureiro</title><link>http://www.willcrisis.com</link></image><generator>RSS for Node</generator><lastBuildDate>Mon, 13 Mar 2017 13:36:15 GMT</lastBuildDate><atom:link href="http://www.willcrisis.com/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Teste]]></title><description><![CDATA[<div class="paragraph">
 <p>Isso é um teste</p>
-</div>]]></description><link>http://www.willcrisis.com/2017/03/13/Teste.html</link><guid isPermaLink="true">http://www.willcrisis.com/2017/03/13/Teste.html</guid><dc:creator><![CDATA[Willian Krause]]></dc:creator><pubDate>Mon, 13 Mar 2017 00:00:00 GMT</pubDate></item></channel></rss>
+</div>]]></description><link>http://www.willcrisis.com/2017/03/13/Teste.html</link><guid isPermaLink="true">http://www.willcrisis.com/2017/03/13/Teste.html</guid><dc:creator><![CDATA[Willian Krause]]></dc:creator><pubDate>Mon, 13 Mar 2017 00:00:00 GMT</pubDate></item><item><title><![CDATA[DigitalOcean: Hospedagem na nuvem de forma rápida e fácil]]></title><description><![CDATA[<div class="paragraph">
+<p>Fala, pessoal! Quanto tempo, hein?</p>
+</div>
+<div class="paragraph">
+<p>2 anos depois da última postagem, estou de volta! Muita coisa aconteceu nesse meio-tempo (muito-tempo, na verdade). Os próximos posts vão relatar as mudanças!</p>
+</div>
+<div class="paragraph">
+<p>Mas hoje, vamos falar um pouco de nuvem, esse assunto que anda tão na moda.</p>
+</div>
+<div class="paragraph">
+<p>Depois de pagar caro por hospedagens de sites, sofrer com problemas de permissões de arquivos, FTPs lentos e outras coisas, decidi experimentar uma coisa diferente: servidores na nuvem.</p>
+</div>
+<div class="paragraph">
+<p>Uma das coisas que mais me deixava irritado nas hospedagens convencionais era quando eu fazia upload de um arquivo usando o Wordpress (ou o Joomla) e o mesmo era atribuído a um usuário que eu desconhecia. Dessa forma, eu ficava impossibilitado de editar, ou até mesmo de excluir esse arquivo. Tinha, então, que abrir um ticket pro suporte da hospedagem pedindo para excluírem o arquivo pra mim.</p>
+</div>
+<div class="paragraph">
+<p>Com um servidor na nuvem, esse problema não acontece: o servido é seu, então fica mais fácil de resolver esse tipo de situação. Também podemos criar o servidor do nosso jeito, instalando os aplicativos que precisarmos.</p>
+</div>
+<div class="paragraph">
+<p>Experimentei por um tempo o Amazon EC2, que por sinal é muito bom, possui algumas imagens de servidores pré-carregadas, é de fácil utilização e dá 1 ano grátis se o seu servidor estiver dentro do Free-Tier. Porém, quando subi um aplicativo Grails lá (aplicativo simples, sem muitos plugins nem operações complexas), o processamento e a memória dispararam e acabei pagando um valor um pouco alto.</p>
+</div>
+<div class="paragraph">
+<p>Foi aí que um amigo, o <a href="http://www.emilio2hd.com.br">Emílio</a>, falou sobre o <a href="https://www.digitalocean.com/?refcode=a8cd65b5d607">DigitalOcean</a>, um serviço que disponibiliza um servidor da mesma maneira que o Amazon EC2, porém com o custo fixo de 5 dólares por mês no plano básico.</p>
+</div>
+<div class="paragraph">
+<p>No começo fiquei meio receoso, pois nunca tinha ouvido falar no serviço, mas depois de algumas pesquisas na internet, vi que o mesmo é bem avaliado por muita gente.</p>
+</div>
+<div class="paragraph">
+<p>Arrisquei e fiz a conta. O servidor ficou disponível para mim em menos de 1 minuto, com Ubuntu 12.04 e acesso SSH imediato.</p>
+</div>
+<div class="paragraph">
+<p>É possível encontrar muito material e "HowTo"s na comunidade, o que faz com que seja muito fácil de se configurar o que for necessário.</p>
+</div>
+<div class="paragraph">
+<p>Venho brincando nesse servidor há alguns dias e, muito em breve, irei migrar o site e meus projetos pessoais para lá.</p>
+</div>
+<div class="paragraph">
+<p>Se estiver interessado, pode acessar por esse link e me garantir alguns créditos (o DigitalOcean trabalha com esquema de referências :D):</p>
+</div>
+<div class="paragraph">
+<p><a href="https://www.digitalocean.com/?refcode=a8cd65b5d607" class="bare">https://www.digitalocean.com/?refcode=a8cd65b5d607</a></p>
+</div>
+<div class="paragraph">
+<p>Se tiverem perguntas, dúvidas, sugestões, não hesitem em comentar!</p>
+</div>]]></description><link>http://www.willcrisis.com/2013/11/13/Digital-Ocean-Hospedagem-na-nuvem-de-forma-rapida-e-facil.html</link><guid isPermaLink="true">http://www.willcrisis.com/2013/11/13/Digital-Ocean-Hospedagem-na-nuvem-de-forma-rapida-e-facil.html</guid><category><![CDATA[infraestrututra]]></category><category><![CDATA[ servidores]]></category><category><![CDATA[ desenvolvimento]]></category><dc:creator><![CDATA[Willian Krause]]></dc:creator><pubDate>Wed, 13 Nov 2013 00:00:00 GMT</pubDate></item></channel></rss>

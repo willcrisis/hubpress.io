@@ -1,0 +1,33 @@
+= DigitalOcean: Hospedagem na nuvem de forma rápida e fácil
+:published_at: 2013-11-13
+:hp-tags: infraestrututra, servidores, desenvolvimento
+
+Fala, pessoal! Quanto tempo, hein?
+
+2 anos depois da última postagem, estou de volta! Muita coisa aconteceu nesse meio-tempo (muito-tempo, na verdade). Os próximos posts vão relatar as mudanças!
+
+Mas hoje, vamos falar um pouco de nuvem, esse assunto que anda tão na moda.
+
+Depois de pagar caro por hospedagens de sites, sofrer com problemas de permissões de arquivos, FTPs lentos e outras coisas, decidi experimentar uma coisa diferente: servidores na nuvem.
+
+Uma das coisas que mais me deixava irritado nas hospedagens convencionais era quando eu fazia upload de um arquivo usando o Wordpress (ou o Joomla) e o mesmo era atribuído a um usuário que eu desconhecia. Dessa forma, eu ficava impossibilitado de editar, ou até mesmo de excluir esse arquivo. Tinha, então, que abrir um ticket pro suporte da hospedagem pedindo para excluírem o arquivo pra mim.
+
+Com um servidor na nuvem, esse problema não acontece: o servido é seu, então fica mais fácil de resolver esse tipo de situação. Também podemos criar o servidor do nosso jeito, instalando os aplicativos que precisarmos.
+
+Experimentei por um tempo o Amazon EC2, que por sinal é muito bom, possui algumas imagens de servidores pré-carregadas, é de fácil utilização e dá 1 ano grátis se o seu servidor estiver dentro do Free-Tier. Porém, quando subi um aplicativo Grails lá (aplicativo simples, sem muitos plugins nem operações complexas), o processamento e a memória dispararam e acabei pagando um valor um pouco alto.
+
+Foi aí que um amigo, o http://www.emilio2hd.com.br[Emílio], falou sobre o https://www.digitalocean.com/?refcode=a8cd65b5d607[DigitalOcean], um serviço que disponibiliza um servidor da mesma maneira que o Amazon EC2, porém com o custo fixo de 5 dólares por mês no plano básico.
+
+No começo fiquei meio receoso, pois nunca tinha ouvido falar no serviço, mas depois de algumas pesquisas na internet, vi que o mesmo é bem avaliado por muita gente.
+
+Arrisquei e fiz a conta. O servidor ficou disponível para mim em menos de 1 minuto, com Ubuntu 12.04 e acesso SSH imediato.
+
+É possível encontrar muito material e "HowTo"s na comunidade, o que faz com que seja muito fácil de se configurar o que for necessário.
+
+Venho brincando nesse servidor há alguns dias e, muito em breve, irei migrar o site e meus projetos pessoais para lá.
+
+Se estiver interessado, pode acessar por esse link e me garantir alguns créditos (o DigitalOcean trabalha com esquema de referências :D):
+
+https://www.digitalocean.com/?refcode=a8cd65b5d607
+
+Se tiverem perguntas, dúvidas, sugestões, não hesitem em comentar!

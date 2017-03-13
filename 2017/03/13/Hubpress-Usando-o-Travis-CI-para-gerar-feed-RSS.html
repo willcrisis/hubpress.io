@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Hubpress: Usando o Travis-CI para gerar feed RSS</title>
+    <meta name="description" content="" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="http://www.willcrisis.com/favicon.ico">
+
+    <link rel="stylesheet" type="text/css" href="//www.willcrisis.com/themes/casper/assets/css/screen.css?v=1489414858310" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+
+    <link rel="canonical" href="http://www.willcrisis.com/2017/03/13/Hubpress-Usando-o-Travis-CI-para-gerar-feed-RSS.html" />
+    <meta name="referrer" content="origin" />
+    
+    <meta property="og:site_name" content="Relatos de um Desenvolvedor Aventureiro" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Hubpress: Usando o Travis-CI para gerar feed RSS" />
+    <meta property="og:description" content="Assim que descobri a existência do Hubpress, tive vontade imediata de migrar todo o conteúdo do meu site para ele, na intenção de centralizar minhas experiências todas no GitHub. Porém, logo de cara, percebi um grande problema: ele não gera o feed RSS dos artigos nativamente. Isso poderia inviabilizar a" />
+    <meta property="og:url" content="http://www.willcrisis.com/2017/03/13/Hubpress-Usando-o-Travis-CI-para-gerar-feed-RSS.html" />
+    <meta property="article:published_time" content="2017-03-13T00:00:00.000Z" />
+    <meta property="article:tag" content="hubpress" />
+    <meta property="article:tag" content=" desenvolvimento" />
+    <meta property="article:tag" content=" github" />
+    <meta property="article:tag" content=" travis-ci" />
+    <meta property="article:tag" content=" travis" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Hubpress: Usando o Travis-CI para gerar feed RSS" />
+    <meta name="twitter:description" content="Assim que descobri a existência do Hubpress, tive vontade imediata de migrar todo o conteúdo do meu site para ele, na intenção de centralizar minhas experiências todas no GitHub. Porém, logo de cara, percebi um grande problema: ele não gera o feed RSS dos artigos nativamente. Isso poderia inviabilizar a" />
+    <meta name="twitter:url" content="http://www.willcrisis.com/2017/03/13/Hubpress-Usando-o-Travis-CI-para-gerar-feed-RSS.html" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Relatos de um Desenvolvedor Aventureiro",
+    "author": {
+        "@type": "Person",
+        "name": "Willian Krause",
+        "image": "https://avatars1.githubusercontent.com/u/1250489?v=3",
+        "url": "http://www.willcrisis.com/author/willcrisis/",
+        "sameAs": "http://www.willcrisis.com"
+    },
+    "headline": "Hubpress: Usando o Travis-CI para gerar feed RSS",
+    "url": "http://www.willcrisis.com/2017/03/13/Hubpress-Usando-o-Travis-CI-para-gerar-feed-RSS.html",
+    "datePublished": "2017-03-13T00:00:00.000Z",
+    "keywords": "hubpress,  desenvolvimento,  github,  travis-ci,  travis",
+    "description": "Assim que descobri a existência do Hubpress, tive vontade imediata de migrar todo o conteúdo do meu site para ele, na intenção de centralizar minhas experiências todas no GitHub. Porém, logo de cara, percebi um grande problema: ele não gera o feed RSS dos artigos nativamente. Isso poderia inviabilizar a"
+}
+    </script>
+
+    <meta name="generator" content="HubPress" />
+    <link rel="alternate" type="application/rss+xml" title="Relatos de um Desenvolvedor Aventureiro" href="http://www.willcrisis.com/rss/" />
+</head>
+<body class="post-template tag-hubpress tag-desenvolvimento tag-github tag-travis-ci tag-travis nav-closed">
+
+    
+
+    <div class="site-wrapper">
+
+        
+
+
+<header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        
+    </nav>
+</header>
+
+<main class="content" role="main">
+    <article class="post tag-hubpress tag-desenvolvimento tag-github tag-travis-ci tag-travis">
+
+        <header class="post-header">
+            <h1 class="post-title">Hubpress: Usando o Travis-CI para gerar feed RSS</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2017-03-13">13 March 2017</time>  on <a href="http://www.willcrisis.com/tag/hubpress/">hubpress</a>, <a href="http://www.willcrisis.com/tag/desenvolvimento/"> desenvolvimento</a>, <a href="http://www.willcrisis.com/tag/github/"> github</a>, <a href="http://www.willcrisis.com/tag/travis-ci/"> travis-ci</a>, <a href="http://www.willcrisis.com/tag/travis/"> travis</a>
+            </section>
+        </header>
+
+        <section class="post-content">
+            <div class="paragraph">
+<p>Assim que descobri a existência do <a href="http://hubpress.io">Hubpress</a>, tive vontade imediata de migrar todo o conteúdo do meu site para ele, na intenção de centralizar minhas experiências todas no GitHub. Porém, logo de cara, percebi um grande problema: ele não gera o feed RSS dos artigos nativamente.</p>
+</div>
+<div class="paragraph">
+<p>Isso poderia inviabilizar a minha idéia. Mas dei uma pesquisada e encontrei algumas coisas interessantes, como <a href="https://github.com/HubPress/hubpress.io/issues/49#issuecomment-99165107">esse comentário</a> nas issues do projeto. Seguindo as instruções do link, consegui gerar o feed usando uma classe Groovy tranquilamente. Mas aí apareceu um problema: eu teria que ter um ambiente com o Groovy configurado e seria necessário disparar a geração do feed manualmente. Dessa forma, eu não teria como criar um post de qualquer lugar.</p>
+</div>
+<div class="paragraph">
+<p>Há alguns dias atrás eu estava tentando incorporar o <a href="https://travis-ci.org">Travis CI</a> em um outro <a href="https://github.com/willcrisis/themerize">projeto</a> meu feito em Grails, então lembrei que o Travis é capaz de executar comandos Groovy. Então decidi que usaria o Travis para gerar o RSS do meu blog.</p>
+</div>
+<div class="paragraph">
+<p>Pesquisei por algumas horas, fiz várias tentativas sem sucesso. Até que depois de misturar vários tutoriais diferentes, consegui criar um arquivo <a href="https://github.com/willcrisis/willcrisis.github.io/blob/master/.travis.yml"><code>.travis.yml</code></a> que gerasse o RSS da forma que eu queria.</p>
+</div>
+<div class="paragraph">
+<p>Não vou cobrir aqui como instalar o Hubpress ou criar uma página no GitHub Pages. O Google é nosso amigo nessa hora :D</p>
+</div>
+<div class="paragraph">
+<p>É relativamente fácil fazer isso: primeiro é preciso ter uma conta no Travis CI (é só entrar com seus dados do GitHub). Depois é preciso ativar a integração contínua para o repositório &lt;username&gt;.github.io e criar na raiz do repositório um arquivo <code>.travis.yml</code>.</p>
+</div>
+<div class="paragraph">
+<p>Depois, devemos criar um arquivo chamado <code>generateFeed.groovy</code>, que será o script que vai gerar o RSS em um arquivo para nós. Crie na raiz do projeto com o seguinte conteúdo:</p>
+</div>
+<div class="listingblock">
+<div class="title">generateFeed.groovy</div>
+<div class="content">
+<pre>@Grab('com.rometools:rome:1.5.1')
+@Grab('org.jsoup:jsoup:1.8.2')
+import com.rometools.rome.feed.synd.SyndCategory
+import com.rometools.rome.feed.synd.SyndCategoryImpl
+import com.rometools.rome.feed.synd.SyndContent
+import com.rometools.rome.feed.synd.SyndContentImpl
+import com.rometools.rome.feed.synd.SyndEntry
+import com.rometools.rome.feed.synd.SyndEntryImpl
+import com.rometools.rome.feed.synd.SyndFeed
+import com.rometools.rome.feed.synd.SyndFeedImpl
+import com.rometools.rome.io.SyndFeedOutput
+import groovy.io.FileType
+import groovy.json.JsonSlurper
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+
+def conf = new JsonSlurper().parse(new FileReader('hubpress/config.json'))
+
+SyndFeed feed = new SyndFeedImpl()
+feed.with {
+    title = conf.site.title
+    link = conf.site.url
+    description = conf.site.description
+    feedType = 'rss_2.0'
+    author = conf.socialnetwork.email
+    publishedDate = new Date()
+    language = 'en-UK'
+}
+
+List&lt;SyndEntry&gt; entries = []
+DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+df.setTimeZone(TimeZone.getTimeZone('GMT-2'))
+
+new File('2015').eachFileRecurse(FileType.FILES) { File post -&gt;
+    SyndEntry entry = new SyndEntryImpl()
+    Document document = Jsoup.parse(post, 'UTF-8')
+
+    SyndContent syndDescription = new SyndContentImpl()
+    syndDescription.value = document.getElementsByTag('meta').find { it.attr('property') == 'og:description' }.attr('content')
+
+    entry.with {
+        title = document.getElementsByTag('meta').find { it.attr('property') == 'og:title' }.attr('content')
+        link = document.getElementsByTag('meta').find { it.attr('property') == 'og:url' }.attr('content')
+        description = syndDescription
+        publishedDate = df.parse(document.getElementsByTag('meta').find { it.attr('property') == 'article:modified_time' }.attr('content'))
+        categories = document.getElementsByTag('meta').findAll { it.attr('property') == 'article:tag' }*.attr('content').collect {String tag -&gt;
+            SyndCategory category = new SyndCategoryImpl()
+            category.name = tag
+            return category
+        }
+    }
+
+    entries &lt;&lt; entry
+}
+
+feed.entries = entries.sort { it.publishedDate }.reverse()
+
+Writer writer = new FileWriter('rss');
+SyndFeedOutput output = new SyndFeedOutput()
+output.output(feed,writer)
+writer.close()</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Também é preciso gerar um <a href="https://github.com/settings/tokens">Personal Access Token</a> no GitHub que vai ser usado para fazer o commit do arquivo de feed para o nosso repositório. As permissões que já vem selecionadas são mais que suficientes para isso.</p>
+</div>
+<div class="paragraph">
+<p>Depois de gerar o token, é preciso usar a <a href="https://github.com/travis-ci/travis.rb#readme">ferramenta de linha de comando</a> do Travis para converter nosso token em um "secret" que será usado pelo Travis. Depois de instalar a ferramenta, execute o seguinte comando (deve ser executado dentro da pasta onde foi feito o clone do projeto):</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>$ travis encrypt GH_TOKEN="the-token-from-github" --add</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Isso vai adicionar um "secret" ao nosso arquivo .yml que pode ser convertido pelo Travis usando a variável <code>${GH_TOKEN}</code> nos comandos.</p>
+</div>
+<div class="paragraph">
+<p>Feito isso, coloque o seguinte conteúdo no arquivo <code>.travis.yml</code> fazendo as devidas alterações para coincidirem com o seu repositório:</p>
+</div>
+<div class="listingblock">
+<div class="title">travis.yml</div>
+<div class="content">
+<pre>language: groovy
+before_script:
+- git config --global user.email "krause.willian@gmail.com"
+- git config --global user.name "Willian Krause"
+script: groovy generateFeed.groovy
+after_success:
+  - git add rss
+  - git commit -m "Updated RSS feed [ci skip]"
+  - git branch temp
+  - git checkout master
+  - git merge temp
+  - git branch -d temp
+  - git remote add github https://${GH_TOKEN}@github.com/willcrisis/willcrisis.github.io.git
+  - git push github master --quiet
+env:
+  global:
+  - secure: &lt;código gerado pela ferramenta de linha de comando do Travis&gt;
+  - GH_REPO: github.com/willcrisis/willcrisis.github.io.git</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>É preciso criar uma branch temporária pois o commit aqui será feito em uma branch detached, o que impede que o arquivo seja enviado para o repositório na hora em que o push é executado.</p>
+</div>
+<div class="paragraph">
+<p>Após seguir todos os passos, basta adicionar um novo post na área administrativa do seu blog e ver a mágica acontecendo no Travis!</p>
+</div>
+        </section>
+
+        <footer class="post-footer">
+
+
+            <figure class="author-image">
+                <a class="img" href="http://www.willcrisis.com/author/willcrisis/" style="background-image: url(https://avatars1.githubusercontent.com/u/1250489?v&#x3D;3)"><span class="hidden">Willian Krause's Picture</span></a>
+            </figure>
+
+            <section class="author">
+                <h4><a href="http://www.willcrisis.com/author/willcrisis/">Willian Krause</a></h4>
+
+                    <p>Read <a href="http://www.willcrisis.com/author/willcrisis/">more posts</a> by this author.</p>
+                <div class="author-meta">
+                    <span class="author-location icon-location">Goiania, GO, Brazil</span>
+                    <span class="author-link icon-link"><a href="http://www.willcrisis.com">http://www.willcrisis.com</a></span>
+                </div>
+            </section>
+
+
+            <section class="share">
+                <h4>Share this post</h4>
+                <a class="icon-twitter" href="https://twitter.com/intent/tweet?text=Hubpress%3A%20Usando%20o%20Travis-CI%20para%20gerar%20feed%20RSS&amp;url=http://www.willcrisis.com/2017/03/13/Hubpress-Usando-o-Travis-CI-para-gerar-feed-RSS.html"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://www.willcrisis.com/2017/03/13/Hubpress-Usando-o-Travis-CI-para-gerar-feed-RSS.html"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://www.willcrisis.com/2017/03/13/Hubpress-Usando-o-Travis-CI-para-gerar-feed-RSS.html"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+
+        </footer>
+
+
+        <section class="post-comments">
+          <div id="disqus_thread"></div>
+          <script type="text/javascript">
+          var disqus_shortname = 'willcrisis-site'; // required: replace example with your forum shortname
+          /* * * DON'T EDIT BELOW THIS LINE * * */
+          (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </section>
+
+
+    </article>
+
+</main>
+
+<aside class="read-next">
+</aside>
+
+
+
+        <footer class="site-footer clearfix">
+            <section class="copyright"><a href="http://www.willcrisis.com">Relatos de um Desenvolvedor Aventureiro</a> &copy; 2017</section>
+            <section class="poweredby">Proudly published with <a href="http://hubpress.io">HubPress</a></section>
+        </footer>
+
+    </div>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js?v="></script> 
+      <script type="text/javascript">
+        jQuery( document ).ready(function() {
+          // change date with ago
+          jQuery('ago.ago').each(function(){
+            var element = jQuery(this).parent();
+            element.html( moment(element.text()).fromNow());
+          });
+        });
+
+        hljs.initHighlightingOnLoad();
+      </script>
+       
+    <script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+
+    <script type="text/javascript" src="//www.willcrisis.com/themes/casper/assets/js/jquery.fitvids.js?v=1489414858310"></script>
+    <script type="text/javascript" src="//www.willcrisis.com/themes/casper/assets/js/index.js?v=1489414858310"></script>
+
+</body>
+</html>

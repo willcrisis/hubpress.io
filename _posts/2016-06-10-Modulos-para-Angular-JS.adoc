@@ -1,0 +1,21 @@
+= Módulos para Angular JS
+:hp-tags: AngularJS, Plugins, OpenSource, GitHub, Módulos
+:published_at: 2016-06-10
+
+Nossa... Quanto tempo desde a última vez que apareci por aqui!
+
+Esse post é pra falar sobre alguns projetos que venho desenvolvendo para AngularJS.
+
+Nos últimos meses, comecei a trabalhar efetivamente com Angular 1, e diante de algumas necessidades bem específicas dos projetos nos quais trabalhei, me vi obrigado a desenvolver alguns módulos para facilitar a implementação dessas necessidades. Com isso, surgiram alguns projetos que visam facilitar a vida de nós, desenvolvedores apertados por prazos minúsculos.
+
+## https://github.com/willcrisis/angular-auth[Angular Auth]
+
+Esse foi o meu primeiro módulo criado para o AngularJS 1. É um módulo para encapsular as regras de autenticação e autorização do projeto. Com ele, é só configurar alguns atributos e informar uma URL de backend que a autenticação já estará funcionando. Também suporta validação de regras por Papéis (Roles), que podem ser definidas direto no State (ele depende do fenomenal https://github.com/angular-ui/ui-router[Ui-Router]). Aí no https://github.com/willcrisis/angular-auth[link] tem as informações de instalação e configuração. Também estou evoluindo ele para trabalhar em conjunto com o Firebase, mas essa integração ainda é experimental.
+
+## https://github.com/willcrisis/angular-select2[Angular Select2]
+
+Esse projeto nasceu a partir da necessidade de implementar Selects usando o https://select2.github.io/[Select2]. Encontrei alguns módulos para Angular que fazem isso, mas achei a complexidade deles muito grande para uma coisa tão simples. Por isso decidi implementar minha própria solução. Compartilhei a mesma no GitHub caso alguém também queira uma solução simples pra esse problema.
+
+### Ajude a melhorar!
+
+Se você interessar em algum desses projetos, sinta-se a vontade para abrir Issues ou fazer um fork! Não deixe de fazer seu PR!!

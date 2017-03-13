@@ -1,4 +1,219 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Relatos de um Desenvolvedor Aventureiro]]></title><description><![CDATA[Um blog por Willian Krause]]></description><link>http://www.willcrisis.com</link><image><url>https://raw.githubusercontent.com/willcrisis/willcrisis.github.io/master/images/cover/chessboard.jpg</url><title>Relatos de um Desenvolvedor Aventureiro</title><link>http://www.willcrisis.com</link></image><generator>RSS for Node</generator><lastBuildDate>Mon, 13 Mar 2017 14:26:23 GMT</lastBuildDate><atom:link href="http://www.willcrisis.com/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Módulos para Angular JS]]></title><description><![CDATA[<div id="preamble">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Relatos de um Desenvolvedor Aventureiro]]></title><description><![CDATA[Um blog por Willian Krause]]></description><link>http://www.willcrisis.com</link><image><url>https://raw.githubusercontent.com/willcrisis/willcrisis.github.io/master/images/cover/chessboard.jpg</url><title>Relatos de um Desenvolvedor Aventureiro</title><link>http://www.willcrisis.com</link></image><generator>RSS for Node</generator><lastBuildDate>Mon, 13 Mar 2017 14:27:59 GMT</lastBuildDate><atom:link href="http://www.willcrisis.com/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Criando um projeto Grails 3 com Angular 2]]></title><description><![CDATA[<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Desde que comecei a estudar frameworks de Frontend, uma coisa que me incomodou era a necessidade de se precisar de um servidor para o Frontend e outro para o Backend. Em aplicações muito grandes, onde os dois projetos são totalmente separados, é algo que até dá pra entender, mas em projetos menores, é um custo a mais que acaba sendo desnecessário, pois poderíamos aproveitar o servidor onde vamos publicar nosso projeto Backend para servir também o front sem nenhuma configuração adicional.</p>
+</div>
+<div class="paragraph">
+<p>Por gostar bastante de Grails e do Angular 2, há algum tempo comecei a procurar uma forma de desenvolver um projeto único, mas onde eu pudesse usar as duas tecnologias ao mesmo tempo. Depois de algum tempo de pesquisa, consegui chegar a uma solução que acredito ser simples, porém que atende perfeitamente este cenário.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_criando_o_projeto_grails">Criando o projeto Grails</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_grails_application_forge">Grails Application Forge</h3>
+<div class="paragraph">
+<p>Aproveito aqui pra falar sobre o <a href="http://start.grails.org">Grails Application Forge</a>, uma ferramenta magnífica feita pelo pessoal do Grails. Com ela, você pode criar um novo projeto Grails escolhendo quais dependências deseja utilizar, qual a versão do Grails e qual o profile que deseja utilizar no seu projeto. Utilizando o benefício do Gradle Wrapper e do Grails Wrapper, você pode começar seu projeto sem precisar baixar os binários do Grails, sem configurar variáveis de ambiente, e sem precisar rodar o comando <code>grails create-app</code>. Basta baixar o arquivo zip gerado, extrair e rodar o comando <code>gradlew bootRun</code> dentro da pasta do projeto. Com isso, eliminamos problemas de versões diferentes no ambiente de desenvolvimento.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_criando_o_projeto">Criando o projeto</h3>
+<div class="paragraph">
+<p>Prosseguindo com o projeto, criei um novo projeto usando o profile <code>rest-api</code>. Pode ser criado tanto via linha de comando quanto pelo Grails Application Forge que citei acima. Eu utilizei o Application Forge, pois facilita muito na hora de montar um novo ambiente.</p>
+</div>
+<div class="paragraph">
+<p>Caso prefira criar o projeto via linha de comando, é só rodar <code>grails create-app myapp --profile rest-api</code></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_alterando_as_configura_es">Alterando as configurações</h3>
+<div class="paragraph">
+<p>Precisamos alterar alguns arquivos de configuração para nosso projeto funcionar com o Angular 2. O primeiro deles é o <code>application.yml</code>. É preciso adicionar a linha <code>grails.resources.pattern: /**</code> para indicar que o conteúdo estático gerado pelo Angular será servido a partir da raiz do projeto. Vamos falar um pouco sobre o conteúdo estático já já. O arquivo fica assim:</p>
+</div>
+<div class="paragraph">
+<p>application.yml</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>grails:
+    profile: rest-api
+    codegen:
+        defaultPackage: grails3.angular2
+    spring:
+        transactionManagement:
+            proxies: false
+info:
+    app:
+        name: '@info.app.name@'
+        version: '@info.app.version@'
+        grailsVersion: '@info.app.grailsVersion@'
+spring:
+    main:
+        banner-mode: "off"
+    groovy:
+        template:
+            check-template-location: false
+
+grails.resources.pattern: /**
+
+...</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Depois, é preciso alterar também o arquivo <code>UrlMappings.groovy</code>. Vamos alterar as URLs dos endpoints colocando o prefixo <code>api</code> a elas, e vamos alterar o mapeamento da URL <code>/</code> para um arquivo <code>index.html</code>. O mapeamento fica assim:</p>
+</div>
+<div class="paragraph">
+<p>UrlMappings.groovy</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>class UrlMappings {
+
+    static mappings = {
+        delete "/api/$controller/$id(.$format)?"(action:"delete")
+        get "/api/$controller(.$format)?"(action:"index")
+        get "/api/$controller/$id(.$format)?"(action:"show")
+        post "/api/$controller(.$format)?"(action:"save")
+        put "/api/$controller/$id(.$format)?"(action:"update")
+        patch "/api/$controller/$id(.$format)?"(action:"patch")
+
+        "/"(redirect: '/index.html')
+        "500"(view: '/error')
+        "404"(view: '/notFound')
+    }
+}</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_conte_do_est_tico_no_grails">Conteúdo estático no Grails</h3>
+<div class="paragraph">
+<p>Muitos não sabem, mas é possível servir conteúdo estático em um projeto Grails. Para isso, usamos a pasta <code>src/main/resources/public</code> ou a pasta <code>src/main/webapp</code>. A vantagem de se usar a primeira pasta é que o conteúdo também é exportado quando se cria um arquivo <code>.jar</code>. Já na segunda, o conteúdo só é exportado quando se cria um arquivo <code>.war</code>.</p>
+</div>
+<div class="paragraph">
+<p>Por padrão, o conteúdo estático é servido através da URL <code><a href="http://servidor:porta/static/" class="bare">http://servidor:porta/static/</a></code>. Ao criarmos a configuração no arquivo <code>application.yml</code>, estamos dizendo ao Grails para servir o conteúdo estático através da URL raiz do nosso projeto (<code><a href="http://servidor:porta/" class="bare">http://servidor:porta/</a></code>). Se quiser fazer um teste, crie um arquivo <code>index.html</code> qualquer na pasta <code>src/main/resources/public</code> e execute o projeto. Antes de adicionar a configuração, este arquivo pode ser visto pela URL <code><a href="http://localhost:8080/static/index.html" class="bare">http://localhost:8080/static/index.html</a></code>. Após adicionar a configuração, o arquivo pode ser visto na URL <code><a href="http://localhost:8080/index.html" class="bare">http://localhost:8080/index.html</a></code>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_criando_o_projeto_angular_2">Criando o projeto Angular 2</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Agora vamos criar o projeto Angular 2, que será servido através do mesmo container do projeto Grails.</p>
+</div>
+<div class="paragraph">
+<p>Precisamos, primeiro de tudo, instalar o <a href="https://nodejs.org/en/">Node.js</a> na máquina. Usaremos também o <a href="https://github.com/angular/angular-cli">Angular CLI</a> para gerar e executar nosso projeto Angular.</p>
+</div>
+<div class="sect2">
+<h3 id="_instalando_o_node">Instalando o Node</h3>
+<div class="paragraph">
+<p>Instalar o Node é bem fácil. É só baixar o executável do site (preferencialmente uma versão acima da 6.9), executar o instalador e pronto. Não esqueça de marcar a opção para adicionar o Node à variável de ambiente <code>path</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_instalando_o_angular_cli">Instalando o Angular CLI</h3>
+<div class="paragraph">
+<p>Depois de instalar o node, é só executar no terminal o comando <code>npm install -g @angular/cli</code>. Depois de instalado, será possível executar o comando <code>ng</code> no terminal. Para uma lista completa de comandos, execute <code>ng --help</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_criando_o_projeto_angular_2_2">Criando o projeto Angular 2</h3>
+<div class="paragraph">
+<p>Para criar um projeto Angular 2, usamos o comando <code>ng new &lt;meu-projeto&gt;</code>. Vamos executá-lo na pasta um nível acima de onde está nosso projeto Grails, usando o mesmo nome de projeto. Por exemplo, se o seu projeto Grails está na pasta <code>C:\des\grails3-angular2</code>, abre um terminal, navegue até a pasta <code>C:\des</code> e execute o comando <code>ng new grails3-angular2</code>. Pode dar um conflito no arquivo <code>.gitignore</code>. Eu recomendo copiar o conteúdo do arquivo do projeto Grails existente para um editor de texto, deixar o Angular CLI sobrescrever o arquivo, e depois colar de volta o conteúdo do arquivo antigo no novo arquivo gerado.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_configurando_o_projeto_angular_2">Configurando o projeto Angular 2</h3>
+<div class="paragraph">
+<p>Depois de criar o projeto, vamos alterar o arquivo <code>.angular-cli.json</code>. Vamos alterar o valor da propriedade <code>outDir</code> para <code>src/main/resources/public</code>. Esse atributo indica onde o Angular CLI vai gerar o código Javascript e HTML do projeto Angular2. Colocamos nesse atributo o caminho da pasta de conteúdo estático do Grails.</p>
+</div>
+<div class="paragraph">
+<p>O arquivo vai ficar mais ou menos assim:</p>
+</div>
+<div class="listingblock">
+<div class="title">angular-cli.json</div>
+<div class="content">
+<pre>{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "project": {
+    "name": "grails3-angular2"
+  },
+  "apps": [
+    {
+      "root": "src",
+      "outDir": "src/main/resources/public",
+      "assets": [
+        "assets",
+        "favicon.ico"
+      ],
+      "index": "index.html",
+      ....
+    }
+  ]
+  ...
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Depois, precisamos alterar também o arquivo <code>package.json</code>. Vamos alterar o script <code>start</code> para <code>ng build --watch</code>. Fica mais ou menos assim:</p>
+</div>
+<div class="paragraph">
+<p>package.json</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{
+  "name": "grails3-angular2",
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng build --watch",
+    "build": "ng build",
+    "test": "ng test",
+    "lint": "ng lint",
+    "e2e": "ng e2e"
+  },
+  ....
+}</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_executando_o_projeto">Executando o projeto</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Abra um terminal na pasta raiz do projeto. Nesse terminal, execute o comando <code>npm start</code>. Isso irá iniciar a construção em tempo real do projeto Angular 2.</p>
+</div>
+<div class="paragraph">
+<p>Depois, abra outro terminal também na pasta raiz do projeto, e execute o projeto Grails. Se você está usando o Wrapper, rode <code>gradlew bootRun</code>. Se está usando o Grails instalado, rode <code>grails run-app</code>.</p>
+</div>
+<div class="paragraph">
+<p>Ao iniciar, abra o endereço <code><a href="http://localhost:8080" class="bare">http://localhost:8080</a></code> no navegador. Você deverá ver a página inicial padrão do projeto Angular 2. Como estamos executando a construção em tempo real do Angular 2, caso algum arquivo seja alterado, é só atualizar a página que as alterações já podem ser vistas.</p>
+</div>
+<div class="paragraph">
+<p>Ao exportar o projeto como JAR ou como WAR, a pasta de conteúdo estático também será exportada, e o projeto pode ser acessado da mesma maneira.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_conclus_o">Conclusão</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Sei que muitos vão argumentar que o projeto Front deve ficar separado do projeto Backend, porém esta abordagem é pra quem, assim como eu, quer poder criar um projeto usando os dois frameworks sem ter que criar configurações separadas de servidor.</p>
+</div>
+<div class="paragraph">
+<p>Se tiver alguma dúvida, pode escrever nos comentários ou me mandar um e-mail.</p>
+</div>
+<div class="paragraph">
+<p>Aqui tem o código-fonte do projeto hospedado no GitHub: <a href="https://github.com/willcrisis/grails3-angular2" class="bare">https://github.com/willcrisis/grails3-angular2</a></p>
+</div>
+</div>
+</div>]]></description><link>http://www.willcrisis.com/2017/03/13/Criando-um-projeto-Grails-3-com-Angular-2.html</link><guid isPermaLink="true">http://www.willcrisis.com/2017/03/13/Criando-um-projeto-Grails-3-com-Angular-2.html</guid><category><![CDATA[Grails]]></category><category><![CDATA[ Angular]]></category><category><![CDATA[ Angular 2]]></category><category><![CDATA[ Grails 3]]></category><category><![CDATA[ Frontend]]></category><category><![CDATA[ Backend]]></category><category><![CDATA[ API]]></category><category><![CDATA[ REST]]></category><dc:creator><![CDATA[Willian Krause]]></dc:creator><pubDate>Mon, 13 Mar 2017 00:00:00 GMT</pubDate></item><item><title><![CDATA[Módulos para Angular JS]]></title><description><![CDATA[<div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
 <p>Nossa&#8230;&#8203; Quanto tempo desde a última vez que apareci por aqui!</p>
@@ -34,7 +249,142 @@
 </div>
 </div>]]></description><link>http://www.willcrisis.com/2016/06/10/Modulos-para-Angular-JS.html</link><guid isPermaLink="true">http://www.willcrisis.com/2016/06/10/Modulos-para-Angular-JS.html</guid><category><![CDATA[AngularJS]]></category><category><![CDATA[ Plugins]]></category><category><![CDATA[ OpenSource]]></category><category><![CDATA[ GitHub]]></category><category><![CDATA[ Módulos]]></category><dc:creator><![CDATA[Willian Krause]]></dc:creator><pubDate>Fri, 10 Jun 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[De casa nova]]></title><description><![CDATA[<div class="paragraph">
 <p>O Willcrisis.com está de casa nova!!! Agora hospedado no Github Pages usando o magnífico <a href="http://hubpress.io">Hubpress</a>.</p>
-</div>]]></description><link>http://www.willcrisis.com/2015/11/11/De-casa-nova.html</link><guid isPermaLink="true">http://www.willcrisis.com/2015/11/11/De-casa-nova.html</guid><dc:creator><![CDATA[Willian Krause]]></dc:creator><pubDate>Wed, 11 Nov 2015 00:00:00 GMT</pubDate></item><item><title><![CDATA[Movendo um repositório do BitBucket para o GitHub (ou vice-versa)]]></title><description><![CDATA[<div class="paragraph">
+</div>]]></description><link>http://www.willcrisis.com/2015/11/11/De-casa-nova.html</link><guid isPermaLink="true">http://www.willcrisis.com/2015/11/11/De-casa-nova.html</guid><dc:creator><![CDATA[Willian Krause]]></dc:creator><pubDate>Wed, 11 Nov 2015 00:00:00 GMT</pubDate></item><item><title><![CDATA[Hubpress: Usando o Travis-CI para gerar feed RSS]]></title><description><![CDATA[<div class="paragraph">
+<p>Assim que descobri a existência do <a href="http://hubpress.io">Hubpress</a>, tive vontade imediata de migrar todo o conteúdo do meu site para ele, na intenção de centralizar minhas experiências todas no GitHub. Porém, logo de cara, percebi um grande problema: ele não gera o feed RSS dos artigos nativamente.</p>
+</div>
+<div class="paragraph">
+<p>Isso poderia inviabilizar a minha idéia. Mas dei uma pesquisada e encontrei algumas coisas interessantes, como <a href="https://github.com/HubPress/hubpress.io/issues/49#issuecomment-99165107">esse comentário</a> nas issues do projeto. Seguindo as instruções do link, consegui gerar o feed usando uma classe Groovy tranquilamente. Mas aí apareceu um problema: eu teria que ter um ambiente com o Groovy configurado e seria necessário disparar a geração do feed manualmente. Dessa forma, eu não teria como criar um post de qualquer lugar.</p>
+</div>
+<div class="paragraph">
+<p>Há alguns dias atrás eu estava tentando incorporar o <a href="https://travis-ci.org">Travis CI</a> em um outro <a href="https://github.com/willcrisis/themerize">projeto</a> meu feito em Grails, então lembrei que o Travis é capaz de executar comandos Groovy. Então decidi que usaria o Travis para gerar o RSS do meu blog.</p>
+</div>
+<div class="paragraph">
+<p>Pesquisei por algumas horas, fiz várias tentativas sem sucesso. Até que depois de misturar vários tutoriais diferentes, consegui criar um arquivo <a href="https://github.com/willcrisis/willcrisis.github.io/blob/master/.travis.yml"><code>.travis.yml</code></a> que gerasse o RSS da forma que eu queria.</p>
+</div>
+<div class="paragraph">
+<p>Não vou cobrir aqui como instalar o Hubpress ou criar uma página no GitHub Pages. O Google é nosso amigo nessa hora :D</p>
+</div>
+<div class="paragraph">
+<p>É relativamente fácil fazer isso: primeiro é preciso ter uma conta no Travis CI (é só entrar com seus dados do GitHub). Depois é preciso ativar a integração contínua para o repositório &lt;username&gt;.github.io e criar na raiz do repositório um arquivo <code>.travis.yml</code>.</p>
+</div>
+<div class="paragraph">
+<p>Depois, devemos criar um arquivo chamado <code>generateFeed.groovy</code>, que será o script que vai gerar o RSS em um arquivo para nós. Crie na raiz do projeto com o seguinte conteúdo:</p>
+</div>
+<div class="listingblock">
+<div class="title">generateFeed.groovy</div>
+<div class="content">
+<pre>@Grab('com.rometools:rome:1.5.1')
+@Grab('org.jsoup:jsoup:1.8.2')
+import com.rometools.rome.feed.synd.SyndCategory
+import com.rometools.rome.feed.synd.SyndCategoryImpl
+import com.rometools.rome.feed.synd.SyndContent
+import com.rometools.rome.feed.synd.SyndContentImpl
+import com.rometools.rome.feed.synd.SyndEntry
+import com.rometools.rome.feed.synd.SyndEntryImpl
+import com.rometools.rome.feed.synd.SyndFeed
+import com.rometools.rome.feed.synd.SyndFeedImpl
+import com.rometools.rome.io.SyndFeedOutput
+import groovy.io.FileType
+import groovy.json.JsonSlurper
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+
+def conf = new JsonSlurper().parse(new FileReader('hubpress/config.json'))
+
+SyndFeed feed = new SyndFeedImpl()
+feed.with {
+    title = conf.site.title
+    link = conf.site.url
+    description = conf.site.description
+    feedType = 'rss_2.0'
+    author = conf.socialnetwork.email
+    publishedDate = new Date()
+    language = 'en-UK'
+}
+
+List&lt;SyndEntry&gt; entries = []
+DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+df.setTimeZone(TimeZone.getTimeZone('GMT-2'))
+
+new File('2015').eachFileRecurse(FileType.FILES) { File post -&gt;
+    SyndEntry entry = new SyndEntryImpl()
+    Document document = Jsoup.parse(post, 'UTF-8')
+
+    SyndContent syndDescription = new SyndContentImpl()
+    syndDescription.value = document.getElementsByTag('meta').find { it.attr('property') == 'og:description' }.attr('content')
+
+    entry.with {
+        title = document.getElementsByTag('meta').find { it.attr('property') == 'og:title' }.attr('content')
+        link = document.getElementsByTag('meta').find { it.attr('property') == 'og:url' }.attr('content')
+        description = syndDescription
+        publishedDate = df.parse(document.getElementsByTag('meta').find { it.attr('property') == 'article:modified_time' }.attr('content'))
+        categories = document.getElementsByTag('meta').findAll { it.attr('property') == 'article:tag' }*.attr('content').collect {String tag -&gt;
+            SyndCategory category = new SyndCategoryImpl()
+            category.name = tag
+            return category
+        }
+    }
+
+    entries &lt;&lt; entry
+}
+
+feed.entries = entries.sort { it.publishedDate }.reverse()
+
+Writer writer = new FileWriter('rss');
+SyndFeedOutput output = new SyndFeedOutput()
+output.output(feed,writer)
+writer.close()</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Também é preciso gerar um <a href="https://github.com/settings/tokens">Personal Access Token</a> no GitHub que vai ser usado para fazer o commit do arquivo de feed para o nosso repositório. As permissões que já vem selecionadas são mais que suficientes para isso.</p>
+</div>
+<div class="paragraph">
+<p>Depois de gerar o token, é preciso usar a <a href="https://github.com/travis-ci/travis.rb#readme">ferramenta de linha de comando</a> do Travis para converter nosso token em um "secret" que será usado pelo Travis. Depois de instalar a ferramenta, execute o seguinte comando (deve ser executado dentro da pasta onde foi feito o clone do projeto):</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>$ travis encrypt GH_TOKEN="the-token-from-github" --add</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Isso vai adicionar um "secret" ao nosso arquivo .yml que pode ser convertido pelo Travis usando a variável <code>${GH_TOKEN}</code> nos comandos.</p>
+</div>
+<div class="paragraph">
+<p>Feito isso, coloque o seguinte conteúdo no arquivo <code>.travis.yml</code> fazendo as devidas alterações para coincidirem com o seu repositório:</p>
+</div>
+<div class="listingblock">
+<div class="title">travis.yml</div>
+<div class="content">
+<pre>language: groovy
+before_script:
+- git config --global user.email "krause.willian@gmail.com"
+- git config --global user.name "Willian Krause"
+script: groovy generateFeed.groovy
+after_success:
+  - git add rss
+  - git commit -m "Updated RSS feed [ci skip]"
+  - git branch temp
+  - git checkout master
+  - git merge temp
+  - git branch -d temp
+  - git remote add github https://${GH_TOKEN}@github.com/willcrisis/willcrisis.github.io.git
+  - git push github master --quiet
+env:
+  global:
+  - secure: &lt;código gerado pela ferramenta de linha de comando do Travis&gt;
+  - GH_REPO: github.com/willcrisis/willcrisis.github.io.git</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>É preciso criar uma branch temporária pois o commit aqui será feito em uma branch detached, o que impede que o arquivo seja enviado para o repositório na hora em que o push é executado.</p>
+</div>
+<div class="paragraph">
+<p>Após seguir todos os passos, basta adicionar um novo post na área administrativa do seu blog e ver a mágica acontecendo no Travis!</p>
+</div>]]></description><link>http://www.willcrisis.com/2015/10/23/Hubpress-Usando-o-Travis-CI-para-gerar-feed-RSS.html</link><guid isPermaLink="true">http://www.willcrisis.com/2015/10/23/Hubpress-Usando-o-Travis-CI-para-gerar-feed-RSS.html</guid><category><![CDATA[hubpress]]></category><category><![CDATA[ desenvolvimento]]></category><category><![CDATA[ github]]></category><category><![CDATA[ travis-ci]]></category><category><![CDATA[ travis]]></category><dc:creator><![CDATA[Willian Krause]]></dc:creator><pubDate>Fri, 23 Oct 2015 00:00:00 GMT</pubDate></item><item><title><![CDATA[Movendo um repositório do BitBucket para o GitHub (ou vice-versa)]]></title><description><![CDATA[<div class="paragraph">
 <p>Utilizo o <a href="http://bitbucket.org">BitBucket</a> há algum tempo por causa da possibilidade de criar repositórios privados grátis sem muita complicação, e também por ele ter integração com o <a href="http://codeship.com">Codeship</a> (ainda pretendo escrever um post sobre ele). Mas decidi abrir alguns dos meus projetos particulares após começar a participar da comunidade um pouco mais ativamente. Por isso, optei por mover esses projetos abertos para o <a href="http://github.com">GitHub</a> devido à maior popularidade deste para projetos opensource. Pensei que teria dificuldade, que seria muito complicado transferir todo o histórico de commits e etc, mas é uma tarefa muito mais simples do que parece.</p>
 </div>
 <div class="paragraph">

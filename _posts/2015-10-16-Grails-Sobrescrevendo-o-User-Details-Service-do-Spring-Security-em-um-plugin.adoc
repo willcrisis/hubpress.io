@@ -1,0 +1,18 @@
+= Grails: Sobrescrevendo o UserDetailsService do Spring Security em um plugin
+:hp-tags: grails, desenvolvimento, banco de código, spring security
+:published_at: 2015-10-16
+
+Recentemente comecei a implementar alguns plugins para encapsular as lógicas comuns entre as aplicações que desenvolvo usando Grails. Uma dessas lógicas é a de segurança, onde eu adiciono alguns campos às classes do Spring Security e mais alguns recursos de cadastro (envio de e-mails ao usuário cadastrado, recurso de "esqueci minha senha", etc). Decidi escrever então um plugin que teria o SpringSecurityCore como dependência, e dentro dele eu definiria toda a minha lógica para ser reaproveitada em outros projetos. 
+
+Tudo muito lindo, tudo muito fácil, não fosse um pequeno detalhe: eu não conseguia sobrescrever o bean `userDetailsService` de nenhuma forma dentro do bloco `doWithSpring` dentro do meu descritor do plugin. Por mais q tentasse, nada de conseguir substituir esse bean pela classe que criei seguindo a http://grails-plugins.github.io/grails-spring-security-core/guide/userDetailsService.html[documentação oficial] do plugin. Cheguei ao ponto de editar o código fonte do plugin e submeter um https://github.com/grails-plugins/grails-spring-security-core/pull/387[pull request], que foi devidamente rejeitado pela equipe. Mas como a comunidade é algo lindo de se ver, o próprio Burt Beckwith https://github.com/grails-plugins/grails-spring-security-core/pull/387#issuecomment-148786957[me ensinou] como fazer para funcionar. E não poderia ser mais fácil.
+
+Todo o problema acontece porque o plugin do Spring Security é carregado após o plugin que eu desenvolvi. Dessa forma, a minha configuração sempre é sobrescrita. O que deve ser feito é adicionar, dentro do descritor do plugin (arquivo `MeuPluginGrailsPlugin.groovy`, fica na raiz do projeto), o atributo `loadAfter` e especificar quais plugins devem ser carregados antes dele. Assim:
+
+[source,groovy]
+----
+def loadAfter = ['springSecurityCore']
+----
+
+Dessa forma, o meu plugin SEMPRE vai ser carregado após o Spring Security Core. Então, em vez de ser ele quem sobrescreve o meu bean, sou eu quem sobrescreve o bean dele!
+
+Claro que se eu tivesse lido a http://grails.github.io/grails-doc/latest/guide/plugins.html[documentação] da forma adequada, teria visto isso escrito lá. Mas não teria tido a oportunidade de ser respondido pelo próprio Burt (que, a propósito, fez um fork e um https://github.com/willcrisis/themerize/pull/1[pull request] em um outro projeto meu!!).

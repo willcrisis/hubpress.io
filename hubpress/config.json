@@ -1,8 +1,9 @@
 {
   "meta": {
-    "username": "put your username here",
-    "repositoryName": "put your repository name here",
-    "branch": "gh-pages"
+    "username": "willcrisis",
+    "repositoryName": "www.willcrisis.com",
+    "branch": "gh-pages",
+    "cname":"www.willcrisis.com"
   },
   "theme": {
     "name": "Casper"

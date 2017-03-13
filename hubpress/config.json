@@ -3,9 +3,37 @@
     "username": "willcrisis",
     "repositoryName": "www.willcrisis.com",
     "branch": "gh-pages",
-    "cname":"www.willcrisis.com"
+    "cname": "www.willcrisis.com"
   },
   "theme": {
-    "name": "Casper"
+    "name": "casper"
+  },
+  "urls": {
+    "site": "http://www.willcrisis.com",
+    "hubpress": "http://www.willcrisis.com",
+    "theme": "//www.willcrisis.com/themes/casper",
+    "images": "http://www.willcrisis.com/images"
+  },
+  "site": {
+    "title": "Relatos de um Desenvolvedor Aventureiro",
+    "description": "Um blog por Willian Krause",
+    "logo": "",
+    "cover": "",
+    "delay": "",
+    "postsPerPage": "",
+    "googleAnalytics": "",
+    "disqus": "willcrisis-site"
+  },
+  "socialnetwork": {
+    "email": "",
+    "github": "",
+    "twitter": "",
+    "facebook": "",
+    "googleplus": "",
+    "instagram": "",
+    "pinterest": "",
+    "flickr": "",
+    "linkedin": "",
+    "stackoverflow": ""
   }
 }

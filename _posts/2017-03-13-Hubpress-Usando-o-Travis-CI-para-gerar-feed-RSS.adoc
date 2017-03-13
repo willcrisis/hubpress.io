@@ -1,0 +1,120 @@
+= Hubpress: Usando o Travis-CI para gerar feed RSS
+:hp-tags: hubpress, desenvolvimento, github, travis-ci, travis
+
+Assim que descobri a existência do http://hubpress.io[Hubpress], tive vontade imediata de migrar todo o conteúdo do meu site para ele, na intenção de centralizar minhas experiências todas no GitHub. Porém, logo de cara, percebi um grande problema: ele não gera o feed RSS dos artigos nativamente.
+
+Isso poderia inviabilizar a minha idéia. Mas dei uma pesquisada e encontrei algumas coisas interessantes, como https://github.com/HubPress/hubpress.io/issues/49#issuecomment-99165107[esse comentário] nas issues do projeto. Seguindo as instruções do link, consegui gerar o feed usando uma classe Groovy tranquilamente. Mas aí apareceu um problema: eu teria que ter um ambiente com o Groovy configurado e seria necessário disparar a geração do feed manualmente. Dessa forma, eu não teria como criar um post de qualquer lugar.
+
+Há alguns dias atrás eu estava tentando incorporar o https://travis-ci.org[Travis CI] em um outro https://github.com/willcrisis/themerize[projeto] meu feito em Grails, então lembrei que o Travis é capaz de executar comandos Groovy. Então decidi que usaria o Travis para gerar o RSS do meu blog.
+
+Pesquisei por algumas horas, fiz várias tentativas sem sucesso. Até que depois de misturar vários tutoriais diferentes, consegui criar um arquivo https://github.com/willcrisis/willcrisis.github.io/blob/master/.travis.yml[`.travis.yml`] que gerasse o RSS da forma que eu queria.
+
+Não vou cobrir aqui como instalar o Hubpress ou criar uma página no GitHub Pages. O Google é nosso amigo nessa hora :D
+
+É relativamente fácil fazer isso: primeiro é preciso ter uma conta no Travis CI (é só entrar com seus dados do GitHub). Depois é preciso ativar a integração contínua para o repositório <username>.github.io e criar na raiz do repositório um arquivo `.travis.yml`.
+
+Depois, devemos criar um arquivo chamado `generateFeed.groovy`, que será o script que vai gerar o RSS em um arquivo para nós. Crie na raiz do projeto com o seguinte conteúdo:
+
+.generateFeed.groovy
+----
+@Grab('com.rometools:rome:1.5.1')
+@Grab('org.jsoup:jsoup:1.8.2')
+import com.rometools.rome.feed.synd.SyndCategory
+import com.rometools.rome.feed.synd.SyndCategoryImpl
+import com.rometools.rome.feed.synd.SyndContent
+import com.rometools.rome.feed.synd.SyndContentImpl
+import com.rometools.rome.feed.synd.SyndEntry
+import com.rometools.rome.feed.synd.SyndEntryImpl
+import com.rometools.rome.feed.synd.SyndFeed
+import com.rometools.rome.feed.synd.SyndFeedImpl
+import com.rometools.rome.io.SyndFeedOutput
+import groovy.io.FileType
+import groovy.json.JsonSlurper
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+
+def conf = new JsonSlurper().parse(new FileReader('hubpress/config.json'))
+
+SyndFeed feed = new SyndFeedImpl()
+feed.with {
+    title = conf.site.title
+    link = conf.site.url
+    description = conf.site.description
+    feedType = 'rss_2.0'
+    author = conf.socialnetwork.email
+    publishedDate = new Date()
+    language = 'en-UK'
+}
+
+List<SyndEntry> entries = []
+DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+df.setTimeZone(TimeZone.getTimeZone('GMT-2'))
+
+new File('2015').eachFileRecurse(FileType.FILES) { File post ->
+    SyndEntry entry = new SyndEntryImpl()
+    Document document = Jsoup.parse(post, 'UTF-8')
+
+    SyndContent syndDescription = new SyndContentImpl()
+    syndDescription.value = document.getElementsByTag('meta').find { it.attr('property') == 'og:description' }.attr('content')
+
+    entry.with {
+        title = document.getElementsByTag('meta').find { it.attr('property') == 'og:title' }.attr('content')
+        link = document.getElementsByTag('meta').find { it.attr('property') == 'og:url' }.attr('content')
+        description = syndDescription
+        publishedDate = df.parse(document.getElementsByTag('meta').find { it.attr('property') == 'article:modified_time' }.attr('content'))
+        categories = document.getElementsByTag('meta').findAll { it.attr('property') == 'article:tag' }*.attr('content').collect {String tag ->
+            SyndCategory category = new SyndCategoryImpl()
+            category.name = tag
+            return category
+        }
+    }
+
+    entries << entry
+}
+
+feed.entries = entries.sort { it.publishedDate }.reverse()
+
+Writer writer = new FileWriter('rss');
+SyndFeedOutput output = new SyndFeedOutput()
+output.output(feed,writer)
+writer.close()
+----
+
+Também é preciso gerar um https://github.com/settings/tokens[Personal Access Token] no GitHub que vai ser usado para fazer o commit do arquivo de feed para o nosso repositório. As permissões que já vem selecionadas são mais que suficientes para isso.
+
+Depois de gerar o token, é preciso usar a https://github.com/travis-ci/travis.rb#readme[ferramenta de linha de comando] do Travis para converter nosso token em um "secret" que será usado pelo Travis. Depois de instalar a ferramenta, execute o seguinte comando (deve ser executado dentro da pasta onde foi feito o clone do projeto):
+....
+$ travis encrypt GH_TOKEN="the-token-from-github" --add
+....
+Isso vai adicionar um "secret" ao nosso arquivo .yml que pode ser convertido pelo Travis usando a variável `${GH_TOKEN}` nos comandos.
+
+Feito isso, coloque o seguinte conteúdo no arquivo `.travis.yml` fazendo as devidas alterações para coincidirem com o seu repositório:
+
+.travis.yml
+----
+language: groovy
+before_script:
+- git config --global user.email "krause.willian@gmail.com"
+- git config --global user.name "Willian Krause"
+script: groovy generateFeed.groovy
+after_success:
+  - git add rss
+  - git commit -m "Updated RSS feed [ci skip]"
+  - git branch temp
+  - git checkout master
+  - git merge temp
+  - git branch -d temp
+  - git remote add github https://${GH_TOKEN}@github.com/willcrisis/willcrisis.github.io.git
+  - git push github master --quiet
+env:
+  global:
+  - secure: <código gerado pela ferramenta de linha de comando do Travis>
+  - GH_REPO: github.com/willcrisis/willcrisis.github.io.git
+----
+
+É preciso criar uma branch temporária pois o commit aqui será feito em uma branch detached, o que impede que o arquivo seja enviado para o repositório na hora em que o push é executado.
+
+Após seguir todos os passos, basta adicionar um novo post na área administrativa do seu blog e ver a mágica acontecendo no Travis!

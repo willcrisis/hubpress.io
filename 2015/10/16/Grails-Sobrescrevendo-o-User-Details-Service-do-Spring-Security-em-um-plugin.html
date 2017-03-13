@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Grails: Sobrescrevendo o UserDetailsService do Spring Security em um plugin</title>
+    <meta name="description" content="" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="http://www.willcrisis.com/favicon.ico">
+
+    <link rel="stylesheet" type="text/css" href="//www.willcrisis.com/themes/casper/assets/css/screen.css?v=1489414697095" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+
+    <link rel="canonical" href="http://www.willcrisis.com/2015/10/16/Grails-Sobrescrevendo-o-User-Details-Service-do-Spring-Security-em-um-plugin.html" />
+    <meta name="referrer" content="origin" />
+    
+    <meta property="og:site_name" content="Relatos de um Desenvolvedor Aventureiro" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Grails: Sobrescrevendo o UserDetailsService do Spring Security em um plugin" />
+    <meta property="og:description" content="Recentemente comecei a implementar alguns plugins para encapsular as lógicas comuns entre as aplicações que desenvolvo usando Grails. Uma dessas lógicas é a de segurança, onde eu adiciono alguns campos às classes do Spring Security e mais alguns recursos de cadastro (envio de e-mails ao usuário cadastrado, recurso de &quot;esqueci" />
+    <meta property="og:url" content="http://www.willcrisis.com/2015/10/16/Grails-Sobrescrevendo-o-User-Details-Service-do-Spring-Security-em-um-plugin.html" />
+    <meta property="article:published_time" content="2015-10-16T00:00:00.000Z" />
+    <meta property="article:tag" content="grails" />
+    <meta property="article:tag" content=" desenvolvimento" />
+    <meta property="article:tag" content=" banco de código" />
+    <meta property="article:tag" content=" spring security" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Grails: Sobrescrevendo o UserDetailsService do Spring Security em um plugin" />
+    <meta name="twitter:description" content="Recentemente comecei a implementar alguns plugins para encapsular as lógicas comuns entre as aplicações que desenvolvo usando Grails. Uma dessas lógicas é a de segurança, onde eu adiciono alguns campos às classes do Spring Security e mais alguns recursos de cadastro (envio de e-mails ao usuário cadastrado, recurso de &quot;esqueci" />
+    <meta name="twitter:url" content="http://www.willcrisis.com/2015/10/16/Grails-Sobrescrevendo-o-User-Details-Service-do-Spring-Security-em-um-plugin.html" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Relatos de um Desenvolvedor Aventureiro",
+    "author": {
+        "@type": "Person",
+        "name": "Willian Krause",
+        "image": "https://avatars1.githubusercontent.com/u/1250489?v=3",
+        "url": "http://www.willcrisis.com/author/willcrisis/",
+        "sameAs": "http://www.willcrisis.com"
+    },
+    "headline": "Grails: Sobrescrevendo o UserDetailsService do Spring Security em um plugin",
+    "url": "http://www.willcrisis.com/2015/10/16/Grails-Sobrescrevendo-o-User-Details-Service-do-Spring-Security-em-um-plugin.html",
+    "datePublished": "2015-10-16T00:00:00.000Z",
+    "keywords": "grails,  desenvolvimento,  banco de código,  spring security",
+    "description": "Recentemente comecei a implementar alguns plugins para encapsular as lógicas comuns entre as aplicações que desenvolvo usando Grails. Uma dessas lógicas é a de segurança, onde eu adiciono alguns campos às classes do Spring Security e mais alguns recursos de cadastro (envio de e-mails ao usuário cadastrado, recurso de &quot;esqueci"
+}
+    </script>
+
+    <meta name="generator" content="HubPress" />
+    <link rel="alternate" type="application/rss+xml" title="Relatos de um Desenvolvedor Aventureiro" href="http://www.willcrisis.com/rss/" />
+</head>
+<body class="post-template tag-grails tag-desenvolvimento tag-banco-de-codigo tag-spring-security nav-closed">
+
+    
+
+    <div class="site-wrapper">
+
+        
+
+
+<header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        
+    </nav>
+</header>
+
+<main class="content" role="main">
+    <article class="post tag-grails tag-desenvolvimento tag-banco-de-codigo tag-spring-security">
+
+        <header class="post-header">
+            <h1 class="post-title">Grails: Sobrescrevendo o UserDetailsService do Spring Security em um plugin</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2015-10-16">16 October 2015</time>  on <a href="http://www.willcrisis.com/tag/grails/">grails</a>, <a href="http://www.willcrisis.com/tag/desenvolvimento/"> desenvolvimento</a>, <a href="http://www.willcrisis.com/tag/banco-de-codigo/"> banco de código</a>, <a href="http://www.willcrisis.com/tag/spring-security/"> spring security</a>
+            </section>
+        </header>
+
+        <section class="post-content">
+            <div class="paragraph">
+<p>Recentemente comecei a implementar alguns plugins para encapsular as lógicas comuns entre as aplicações que desenvolvo usando Grails. Uma dessas lógicas é a de segurança, onde eu adiciono alguns campos às classes do Spring Security e mais alguns recursos de cadastro (envio de e-mails ao usuário cadastrado, recurso de "esqueci minha senha", etc). Decidi escrever então um plugin que teria o SpringSecurityCore como dependência, e dentro dele eu definiria toda a minha lógica para ser reaproveitada em outros projetos.</p>
+</div>
+<div class="paragraph">
+<p>Tudo muito lindo, tudo muito fácil, não fosse um pequeno detalhe: eu não conseguia sobrescrever o bean <code>userDetailsService</code> de nenhuma forma dentro do bloco <code>doWithSpring</code> dentro do meu descritor do plugin. Por mais q tentasse, nada de conseguir substituir esse bean pela classe que criei seguindo a <a href="http://grails-plugins.github.io/grails-spring-security-core/guide/userDetailsService.html">documentação oficial</a> do plugin. Cheguei ao ponto de editar o código fonte do plugin e submeter um <a href="https://github.com/grails-plugins/grails-spring-security-core/pull/387">pull request</a>, que foi devidamente rejeitado pela equipe. Mas como a comunidade é algo lindo de se ver, o próprio Burt Beckwith <a href="https://github.com/grails-plugins/grails-spring-security-core/pull/387#issuecomment-148786957">me ensinou</a> como fazer para funcionar. E não poderia ser mais fácil.</p>
+</div>
+<div class="paragraph">
+<p>Todo o problema acontece porque o plugin do Spring Security é carregado após o plugin que eu desenvolvi. Dessa forma, a minha configuração sempre é sobrescrita. O que deve ser feito é adicionar, dentro do descritor do plugin (arquivo <code>MeuPluginGrailsPlugin.groovy</code>, fica na raiz do projeto), o atributo <code>loadAfter</code> e especificar quais plugins devem ser carregados antes dele. Assim:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">def loadAfter = ['springSecurityCore']</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Dessa forma, o meu plugin SEMPRE vai ser carregado após o Spring Security Core. Então, em vez de ser ele quem sobrescreve o meu bean, sou eu quem sobrescreve o bean dele!</p>
+</div>
+<div class="paragraph">
+<p>Claro que se eu tivesse lido a <a href="http://grails.github.io/grails-doc/latest/guide/plugins.html">documentação</a> da forma adequada, teria visto isso escrito lá. Mas não teria tido a oportunidade de ser respondido pelo próprio Burt (que, a propósito, fez um fork e um <a href="https://github.com/willcrisis/themerize/pull/1">pull request</a> em um outro projeto meu!!).</p>
+</div>
+        </section>
+
+        <footer class="post-footer">
+
+
+            <figure class="author-image">
+                <a class="img" href="http://www.willcrisis.com/author/willcrisis/" style="background-image: url(https://avatars1.githubusercontent.com/u/1250489?v&#x3D;3)"><span class="hidden">Willian Krause's Picture</span></a>
+            </figure>
+
+            <section class="author">
+                <h4><a href="http://www.willcrisis.com/author/willcrisis/">Willian Krause</a></h4>
+
+                    <p>Read <a href="http://www.willcrisis.com/author/willcrisis/">more posts</a> by this author.</p>
+                <div class="author-meta">
+                    <span class="author-location icon-location">Goiania, GO, Brazil</span>
+                    <span class="author-link icon-link"><a href="http://www.willcrisis.com">http://www.willcrisis.com</a></span>
+                </div>
+            </section>
+
+
+            <section class="share">
+                <h4>Share this post</h4>
+                <a class="icon-twitter" href="https://twitter.com/intent/tweet?text=Grails%3A%20Sobrescrevendo%20o%20UserDetailsService%20do%20Spring%20Security%20em%20um%20plugin&amp;url=http://www.willcrisis.com/2015/10/16/Grails-Sobrescrevendo-o-User-Details-Service-do-Spring-Security-em-um-plugin.html"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://www.willcrisis.com/2015/10/16/Grails-Sobrescrevendo-o-User-Details-Service-do-Spring-Security-em-um-plugin.html"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://www.willcrisis.com/2015/10/16/Grails-Sobrescrevendo-o-User-Details-Service-do-Spring-Security-em-um-plugin.html"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+
+        </footer>
+
+
+        <section class="post-comments">
+          <div id="disqus_thread"></div>
+          <script type="text/javascript">
+          var disqus_shortname = 'willcrisis-site'; // required: replace example with your forum shortname
+          /* * * DON'T EDIT BELOW THIS LINE * * */
+          (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </section>
+
+
+    </article>
+
+</main>
+
+<aside class="read-next">
+</aside>
+
+
+
+        <footer class="site-footer clearfix">
+            <section class="copyright"><a href="http://www.willcrisis.com">Relatos de um Desenvolvedor Aventureiro</a> &copy; 2017</section>
+            <section class="poweredby">Proudly published with <a href="http://hubpress.io">HubPress</a></section>
+        </footer>
+
+    </div>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js?v="></script> 
+      <script type="text/javascript">
+        jQuery( document ).ready(function() {
+          // change date with ago
+          jQuery('ago.ago').each(function(){
+            var element = jQuery(this).parent();
+            element.html( moment(element.text()).fromNow());
+          });
+        });
+
+        hljs.initHighlightingOnLoad();
+      </script>
+       
+    <script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+
+    <script type="text/javascript" src="//www.willcrisis.com/themes/casper/assets/js/jquery.fitvids.js?v=1489414697095"></script>
+    <script type="text/javascript" src="//www.willcrisis.com/themes/casper/assets/js/index.js?v=1489414697095"></script>
+
+</body>
+</html>

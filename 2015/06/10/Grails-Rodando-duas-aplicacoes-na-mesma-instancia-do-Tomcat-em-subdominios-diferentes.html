@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Grails: Rodando duas aplicações na mesma instância do Tomcat em subdomínios diferentes</title>
+    <meta name="description" content="" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="http://www.willcrisis.com/favicon.ico">
+
+    <link rel="stylesheet" type="text/css" href="//www.willcrisis.com/themes/casper/assets/css/screen.css?v=1489412708481" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+
+    <link rel="canonical" href="http://www.willcrisis.com/2015/06/10/Grails-Rodando-duas-aplicacoes-na-mesma-instancia-do-Tomcat-em-subdominios-diferentes.html" />
+    <meta name="referrer" content="origin" />
+    
+    <meta property="og:site_name" content="Relatos de um Desenvolvedor Aventureiro" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Grails: Rodando duas aplicações na mesma instância do Tomcat em subdomínios diferentes" />
+    <meta property="og:description" content="Recentemente precisei fazer deploy de duas aplicações Grails na mesma instância do Tomcat. Tudo seria simples, se não fosse o fato de que cada aplicação seria acessada pelo seu próprio subdomínio, e que a URL deveria ser algo parecido com http://aplicacao1.meudominio.com/controller/id A princípio, basta configurar" />
+    <meta property="og:url" content="http://www.willcrisis.com/2015/06/10/Grails-Rodando-duas-aplicacoes-na-mesma-instancia-do-Tomcat-em-subdominios-diferentes.html" />
+    <meta property="article:published_time" content="2015-06-10T00:00:00.000Z" />
+    <meta property="article:tag" content="desenvolvimento" />
+    <meta property="article:tag" content=" infraestrutura" />
+    <meta property="article:tag" content=" grails" />
+    <meta property="article:tag" content=" banco de código" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Grails: Rodando duas aplicações na mesma instância do Tomcat em subdomínios diferentes" />
+    <meta name="twitter:description" content="Recentemente precisei fazer deploy de duas aplicações Grails na mesma instância do Tomcat. Tudo seria simples, se não fosse o fato de que cada aplicação seria acessada pelo seu próprio subdomínio, e que a URL deveria ser algo parecido com http://aplicacao1.meudominio.com/controller/id A princípio, basta configurar" />
+    <meta name="twitter:url" content="http://www.willcrisis.com/2015/06/10/Grails-Rodando-duas-aplicacoes-na-mesma-instancia-do-Tomcat-em-subdominios-diferentes.html" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Relatos de um Desenvolvedor Aventureiro",
+    "author": {
+        "@type": "Person",
+        "name": "Willian Krause",
+        "image": "https://avatars1.githubusercontent.com/u/1250489?v=3",
+        "url": "http://www.willcrisis.com/author/willcrisis/",
+        "sameAs": "http://www.willcrisis.com"
+    },
+    "headline": "Grails: Rodando duas aplicações na mesma instância do Tomcat em subdomínios diferentes",
+    "url": "http://www.willcrisis.com/2015/06/10/Grails-Rodando-duas-aplicacoes-na-mesma-instancia-do-Tomcat-em-subdominios-diferentes.html",
+    "datePublished": "2015-06-10T00:00:00.000Z",
+    "keywords": "desenvolvimento,  infraestrutura,  grails,  banco de código",
+    "description": "Recentemente precisei fazer deploy de duas aplicações Grails na mesma instância do Tomcat. Tudo seria simples, se não fosse o fato de que cada aplicação seria acessada pelo seu próprio subdomínio, e que a URL deveria ser algo parecido com http://aplicacao1.meudominio.com/controller/id A princípio, basta configurar"
+}
+    </script>
+
+    <meta name="generator" content="HubPress" />
+    <link rel="alternate" type="application/rss+xml" title="Relatos de um Desenvolvedor Aventureiro" href="http://www.willcrisis.com/rss/" />
+</head>
+<body class="post-template tag-desenvolvimento tag-infraestrutura tag-grails tag-banco-de-codigo nav-closed">
+
+    
+
+    <div class="site-wrapper">
+
+        
+
+
+<header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        
+    </nav>
+</header>
+
+<main class="content" role="main">
+    <article class="post tag-desenvolvimento tag-infraestrutura tag-grails tag-banco-de-codigo">
+
+        <header class="post-header">
+            <h1 class="post-title">Grails: Rodando duas aplicações na mesma instância do Tomcat em subdomínios diferentes</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2015-06-10">10 June 2015</time>  on <a href="http://www.willcrisis.com/tag/desenvolvimento/">desenvolvimento</a>, <a href="http://www.willcrisis.com/tag/infraestrutura/"> infraestrutura</a>, <a href="http://www.willcrisis.com/tag/grails/"> grails</a>, <a href="http://www.willcrisis.com/tag/banco-de-codigo/"> banco de código</a>
+            </section>
+        </header>
+
+        <section class="post-content">
+            <div class="paragraph">
+<p>Recentemente precisei fazer deploy de duas aplicações Grails na mesma instância do Tomcat. Tudo seria simples, se não fosse o fato de que cada aplicação seria acessada pelo seu próprio subdomínio, e que a URL deveria ser algo parecido com <a href="http://aplicacao1.meudominio.com/controller/id" class="bare">http://aplicacao1.meudominio.com/controller/id</a></p>
+</div>
+<div class="paragraph">
+<p>A princípio, basta configurar o servidor web Apache com o módulo mod_proxy configurado corretamente que tudo está resolvido. Porém, o Tomcat em sua configuração default adiciona o contexto de cada aplicação na URL que está sendo acessada. Como fazer então para que cada aplicação tenha seu subdomínio exclusivo?</p>
+</div>
+<div class="paragraph">
+<p>A solução me tomou bastante tempo de pesquisa e testes baseados em tentativa e erro. Segue aqui a forma como consegui resolver meu problema.</p>
+</div>
+<div class="paragraph">
+<p>Primeiro de tudo, precisei alterar o arquivo <code>server.xml</code> do Tomcat e fazer algumas alterações: Adicionar um novo Service, criar um Connector, definir uma Engine e um Host. Ficou mais ou menos assim (vou ocultar algumas partes do arquivo por não ser o foco):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;Server ...&gt;
+    ...
+    &lt;Service name="aplicacao1"&gt;
+        &lt;Connector port="8081" protocol="HTTP/1.1"
+            connectionTimeout="20000"
+            redirectPort="8444"
+            proxyName="aplicacao1.meudominio.com"
+            proxyPort="80" /&gt;
+        &lt;Engine name="aplicacao1" defaultHost="aplicacao1"&gt;
+            &lt;Host name="aplicacao1" appBase="aplicacao1" unpackWARs="true" autoDeploy="true"&gt;
+            &lt;/Host&gt;
+        &lt;/Engine&gt;
+    &lt;/Service&gt;
+
+    &lt;Service name="aplicacao2"&gt;
+        &lt;Connector port="8082" protocol="HTTP/1.1"
+            connectionTimeout="20000"
+            redirectPort="8445"
+            proxyName="aplicacao2.meudominio.com"
+            proxyPort="80" /&gt;
+        &lt;Engine name="aplicacao2" defaultHost="aplicacao2"&gt;
+            &lt;Host name="aplicacao2" appBase="aplicacao2" unpackWARs="true" autoDeploy="true"&gt;
+            &lt;/Host&gt;
+        &lt;/Engine&gt;
+    &lt;/Service&gt;
+
+    &lt;Service name="Catalina"&gt;
+        &lt;Connector port="8080" protocol="HTTP/1.1"
+            connectionTimeout="20000"
+            URIEncoding="UTF-8"
+            redirectPort="8443" /&gt;
+            ... (aqui são as configurações default do Tomcat)
+        &lt;/Service&gt;
+&lt;/Server&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Depois de fazer essa configuração, dentro da pasta do Tomcat, criei as pastas aplicacao1 e aplicacao2, no mesmo nível em que a pasta webapps está. Também é preciso dar permissão 775 e mudar o proprietário dessas pastas para o usuário tomcat7.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash"># mkdir aplicacao1
+# mkdir aplicacao2
+# chmod 775 aplicacao1
+# chmod 775 aplicacao2
+# chown tomcat7 aplicacao1
+# chown tomcat7 aplicacao2</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Vai ficar mais ou menos assim:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="http://www.willcrisis.com/images/tomcat-folders.JPG" alt="tomcat folders.JPG">
+</div>
+</div>
+<div class="paragraph">
+<p>Depois, eu copiei os WARs pra dentro da sua respectiva pasta e renomeei eles pra <code>ROOT.war</code>. Por fim, fiz as alterações no Apache para que o proxy redirecione corretamente as requisições:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;VirtualHost *:80&gt;
+    ServerName aplicacao1.meudominio.com
+    ServerAlias aplicacao1.meudominio.com
+
+    ProxyRequests Off
+
+    ErrorLog /var/log/apache2/error-aplicacao1.log
+
+    &lt;Directory proxy:http://aplicacao1.meudominio.com:80&gt;
+        Order Allow,Deny
+        Allow from all
+    &lt;/Directory&gt;
+
+    &lt;Proxy aplicacao1.meudominio.com:80&gt;
+        Order deny,allow
+        Allow from all
+    &lt;/Proxy&gt;
+
+    ProxyPass / http://meudominio.com:8081/
+    ProxyPassReverse / http://meudominio.com:8081/
+&lt;/VirtualHost&gt;
+
+&lt;VirtualHost *:80&gt;
+    ServerName aplicacao2.meudominio.com
+    ServerAlias aplicacao2.meudominio.com
+
+    ProxyRequests Off
+
+    ErrorLog /var/log/apache2/error-aplicacao2.log
+
+    &lt;Directory proxy:http://aplicacao2.meudominio.com:80&gt;
+        Order Allow,Deny
+        Allow from all
+    &lt;/Directory&gt;
+
+    &lt;Proxy aplicacao2.meudominio.com:80&gt;
+        Order deny,allow
+        Allow from all
+    &lt;/Proxy&gt;
+
+    ProxyPass / http://meudominio.com:8082/
+    ProxyPassReverse / http://meudominio.com:8082/
+&lt;/VirtualHost&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Depois é só reiniciar o Apache e o Tomcat e partir pro abraço!!</p>
+</div>
+        </section>
+
+        <footer class="post-footer">
+
+
+            <figure class="author-image">
+                <a class="img" href="http://www.willcrisis.com/author/willcrisis/" style="background-image: url(https://avatars1.githubusercontent.com/u/1250489?v&#x3D;3)"><span class="hidden">Willian Krause's Picture</span></a>
+            </figure>
+
+            <section class="author">
+                <h4><a href="http://www.willcrisis.com/author/willcrisis/">Willian Krause</a></h4>
+
+                    <p>Read <a href="http://www.willcrisis.com/author/willcrisis/">more posts</a> by this author.</p>
+                <div class="author-meta">
+                    <span class="author-location icon-location">Goiania, GO, Brazil</span>
+                    <span class="author-link icon-link"><a href="http://www.willcrisis.com">http://www.willcrisis.com</a></span>
+                </div>
+            </section>
+
+
+            <section class="share">
+                <h4>Share this post</h4>
+                <a class="icon-twitter" href="https://twitter.com/intent/tweet?text=Grails%3A%20Rodando%20duas%20aplica%C3%A7%C3%B5es%20na%20mesma%20inst%C3%A2ncia%20do%20Tomcat%20em%20subdom%C3%ADnios%20diferentes&amp;url=http://www.willcrisis.com/2015/06/10/Grails-Rodando-duas-aplicacoes-na-mesma-instancia-do-Tomcat-em-subdominios-diferentes.html"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://www.willcrisis.com/2015/06/10/Grails-Rodando-duas-aplicacoes-na-mesma-instancia-do-Tomcat-em-subdominios-diferentes.html"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://www.willcrisis.com/2015/06/10/Grails-Rodando-duas-aplicacoes-na-mesma-instancia-do-Tomcat-em-subdominios-diferentes.html"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+
+        </footer>
+
+
+        <section class="post-comments">
+          <div id="disqus_thread"></div>
+          <script type="text/javascript">
+          var disqus_shortname = 'willcrisis-site'; // required: replace example with your forum shortname
+          /* * * DON'T EDIT BELOW THIS LINE * * */
+          (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </section>
+
+
+    </article>
+
+</main>
+
+<aside class="read-next">
+</aside>
+
+
+
+        <footer class="site-footer clearfix">
+            <section class="copyright"><a href="http://www.willcrisis.com">Relatos de um Desenvolvedor Aventureiro</a> &copy; 2017</section>
+            <section class="poweredby">Proudly published with <a href="http://hubpress.io">HubPress</a></section>
+        </footer>
+
+    </div>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js?v="></script> 
+      <script type="text/javascript">
+        jQuery( document ).ready(function() {
+          // change date with ago
+          jQuery('ago.ago').each(function(){
+            var element = jQuery(this).parent();
+            element.html( moment(element.text()).fromNow());
+          });
+        });
+
+        hljs.initHighlightingOnLoad();
+      </script>
+       
+    <script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+
+    <script type="text/javascript" src="//www.willcrisis.com/themes/casper/assets/js/jquery.fitvids.js?v=1489412708481"></script>
+    <script type="text/javascript" src="//www.willcrisis.com/themes/casper/assets/js/index.js?v=1489412708481"></script>
+
+</body>
+</html>

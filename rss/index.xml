@@ -1,6 +1,129 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Relatos de um Desenvolvedor Aventureiro]]></title><description><![CDATA[Um blog por Willian Krause]]></description><link>http://www.willcrisis.com</link><image><url>https://raw.githubusercontent.com/willcrisis/willcrisis.github.io/master/images/cover/chessboard.jpg</url><title>Relatos de um Desenvolvedor Aventureiro</title><link>http://www.willcrisis.com</link></image><generator>RSS for Node</generator><lastBuildDate>Mon, 13 Mar 2017 13:43:58 GMT</lastBuildDate><atom:link href="http://www.willcrisis.com/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Teste]]></title><description><![CDATA[<div class="paragraph">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Relatos de um Desenvolvedor Aventureiro]]></title><description><![CDATA[Um blog por Willian Krause]]></description><link>http://www.willcrisis.com</link><image><url>https://raw.githubusercontent.com/willcrisis/willcrisis.github.io/master/images/cover/chessboard.jpg</url><title>Relatos de um Desenvolvedor Aventureiro</title><link>http://www.willcrisis.com</link></image><generator>RSS for Node</generator><lastBuildDate>Mon, 13 Mar 2017 13:45:08 GMT</lastBuildDate><atom:link href="http://www.willcrisis.com/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Teste]]></title><description><![CDATA[<div class="paragraph">
 <p>Isso é um teste</p>
-</div>]]></description><link>http://www.willcrisis.com/2017/03/13/Teste.html</link><guid isPermaLink="true">http://www.willcrisis.com/2017/03/13/Teste.html</guid><dc:creator><![CDATA[Willian Krause]]></dc:creator><pubDate>Mon, 13 Mar 2017 00:00:00 GMT</pubDate></item><item><title><![CDATA[Grails: Ordenar uma classe de domínio por mais de um campo]]></title><description><![CDATA[<div class="paragraph">
+</div>]]></description><link>http://www.willcrisis.com/2017/03/13/Teste.html</link><guid isPermaLink="true">http://www.willcrisis.com/2017/03/13/Teste.html</guid><dc:creator><![CDATA[Willian Krause]]></dc:creator><pubDate>Mon, 13 Mar 2017 00:00:00 GMT</pubDate></item><item><title><![CDATA[Grails: Rodando duas aplicações na mesma instância do Tomcat em subdomínios diferentes]]></title><description><![CDATA[<div class="paragraph">
+<p>Recentemente precisei fazer deploy de duas aplicações Grails na mesma instância do Tomcat. Tudo seria simples, se não fosse o fato de que cada aplicação seria acessada pelo seu próprio subdomínio, e que a URL deveria ser algo parecido com <a href="http://aplicacao1.meudominio.com/controller/id" class="bare">http://aplicacao1.meudominio.com/controller/id</a></p>
+</div>
+<div class="paragraph">
+<p>A princípio, basta configurar o servidor web Apache com o módulo mod_proxy configurado corretamente que tudo está resolvido. Porém, o Tomcat em sua configuração default adiciona o contexto de cada aplicação na URL que está sendo acessada. Como fazer então para que cada aplicação tenha seu subdomínio exclusivo?</p>
+</div>
+<div class="paragraph">
+<p>A solução me tomou bastante tempo de pesquisa e testes baseados em tentativa e erro. Segue aqui a forma como consegui resolver meu problema.</p>
+</div>
+<div class="paragraph">
+<p>Primeiro de tudo, precisei alterar o arquivo <code>server.xml</code> do Tomcat e fazer algumas alterações: Adicionar um novo Service, criar um Connector, definir uma Engine e um Host. Ficou mais ou menos assim (vou ocultar algumas partes do arquivo por não ser o foco):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;Server ...&gt;
+    ...
+    &lt;Service name="aplicacao1"&gt;
+        &lt;Connector port="8081" protocol="HTTP/1.1"
+            connectionTimeout="20000"
+            redirectPort="8444"
+            proxyName="aplicacao1.meudominio.com"
+            proxyPort="80" /&gt;
+        &lt;Engine name="aplicacao1" defaultHost="aplicacao1"&gt;
+            &lt;Host name="aplicacao1" appBase="aplicacao1" unpackWARs="true" autoDeploy="true"&gt;
+            &lt;/Host&gt;
+        &lt;/Engine&gt;
+    &lt;/Service&gt;
+
+    &lt;Service name="aplicacao2"&gt;
+        &lt;Connector port="8082" protocol="HTTP/1.1"
+            connectionTimeout="20000"
+            redirectPort="8445"
+            proxyName="aplicacao2.meudominio.com"
+            proxyPort="80" /&gt;
+        &lt;Engine name="aplicacao2" defaultHost="aplicacao2"&gt;
+            &lt;Host name="aplicacao2" appBase="aplicacao2" unpackWARs="true" autoDeploy="true"&gt;
+            &lt;/Host&gt;
+        &lt;/Engine&gt;
+    &lt;/Service&gt;
+
+    &lt;Service name="Catalina"&gt;
+        &lt;Connector port="8080" protocol="HTTP/1.1"
+            connectionTimeout="20000"
+            URIEncoding="UTF-8"
+            redirectPort="8443" /&gt;
+            ... (aqui são as configurações default do Tomcat)
+        &lt;/Service&gt;
+&lt;/Server&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Depois de fazer essa configuração, dentro da pasta do Tomcat, criei as pastas aplicacao1 e aplicacao2, no mesmo nível em que a pasta webapps está. Também é preciso dar permissão 775 e mudar o proprietário dessas pastas para o usuário tomcat7.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash"># mkdir aplicacao1
+# mkdir aplicacao2
+# chmod 775 aplicacao1
+# chmod 775 aplicacao2
+# chown tomcat7 aplicacao1
+# chown tomcat7 aplicacao2</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Vai ficar mais ou menos assim:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="http://www.willcrisis.com/images/tomcat-folders.JPG" alt="tomcat folders.JPG">
+</div>
+</div>
+<div class="paragraph">
+<p>Depois, eu copiei os WARs pra dentro da sua respectiva pasta e renomeei eles pra <code>ROOT.war</code>. Por fim, fiz as alterações no Apache para que o proxy redirecione corretamente as requisições:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;VirtualHost *:80&gt;
+    ServerName aplicacao1.meudominio.com
+    ServerAlias aplicacao1.meudominio.com
+
+    ProxyRequests Off
+
+    ErrorLog /var/log/apache2/error-aplicacao1.log
+
+    &lt;Directory proxy:http://aplicacao1.meudominio.com:80&gt;
+        Order Allow,Deny
+        Allow from all
+    &lt;/Directory&gt;
+
+    &lt;Proxy aplicacao1.meudominio.com:80&gt;
+        Order deny,allow
+        Allow from all
+    &lt;/Proxy&gt;
+
+    ProxyPass / http://meudominio.com:8081/
+    ProxyPassReverse / http://meudominio.com:8081/
+&lt;/VirtualHost&gt;
+
+&lt;VirtualHost *:80&gt;
+    ServerName aplicacao2.meudominio.com
+    ServerAlias aplicacao2.meudominio.com
+
+    ProxyRequests Off
+
+    ErrorLog /var/log/apache2/error-aplicacao2.log
+
+    &lt;Directory proxy:http://aplicacao2.meudominio.com:80&gt;
+        Order Allow,Deny
+        Allow from all
+    &lt;/Directory&gt;
+
+    &lt;Proxy aplicacao2.meudominio.com:80&gt;
+        Order deny,allow
+        Allow from all
+    &lt;/Proxy&gt;
+
+    ProxyPass / http://meudominio.com:8082/
+    ProxyPassReverse / http://meudominio.com:8082/
+&lt;/VirtualHost&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Depois é só reiniciar o Apache e o Tomcat e partir pro abraço!!</p>
+</div>]]></description><link>http://www.willcrisis.com/2015/06/10/Grails-Rodando-duas-aplicacoes-na-mesma-instancia-do-Tomcat-em-subdominios-diferentes.html</link><guid isPermaLink="true">http://www.willcrisis.com/2015/06/10/Grails-Rodando-duas-aplicacoes-na-mesma-instancia-do-Tomcat-em-subdominios-diferentes.html</guid><category><![CDATA[desenvolvimento]]></category><category><![CDATA[ infraestrutura]]></category><category><![CDATA[ grails]]></category><category><![CDATA[ banco de código]]></category><dc:creator><![CDATA[Willian Krause]]></dc:creator><pubDate>Wed, 10 Jun 2015 00:00:00 GMT</pubDate></item><item><title><![CDATA[Grails: Ordenar uma classe de domínio por mais de um campo]]></title><description><![CDATA[<div class="paragraph">
 <p>Muitas vezes precisamos que os registros de uma classe de domínio venham ordenados por um determinado campo na listagem padrão. Isso é fácil de fazer em Grails! Basta definir o atributo <code>sort</code> dentro da seção <code>mapping</code> da nossa classe.</p>
 </div>
 <div class="listingblock">

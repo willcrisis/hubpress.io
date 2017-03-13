@@ -1,0 +1,4 @@
+= De casa nova
+:published_at: 2015-11-11
+
+O Willcrisis.com está de casa nova!!! Agora hospedado no Github Pages usando o magnífico http://hubpress.io[Hubpress].

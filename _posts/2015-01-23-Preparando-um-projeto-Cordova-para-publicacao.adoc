@@ -1,0 +1,12 @@
+= Preparando um projeto Cordova para publicação
+:hp-tags: banco de código, desenvolvimento, mobile, cordova
+:published_at: 2015-01-23
+
+Na pasta platforms/android do projeto, executar os seguintes comandos:
+....
+ant release
+cd bin
+jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore ../../../keys/nome_do_arquivo.keystore AppName-release-unsigned.apk nome_do_alias_keystore
+jarsigner -verify -verbose -certs AppName-release-unsigned.apk
+zipalign -v 4 AppName-release-unsigned.apk AppName.apk
+....

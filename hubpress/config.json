@@ -18,22 +18,22 @@
     "title": "Relatos de um Desenvolvedor Aventureiro",
     "description": "Um blog por Willian Krause",
     "logo": "",
-    "cover": "",
+    "cover": "https://raw.githubusercontent.com/willcrisis/willcrisis.github.io/master/images/cover/chessboard.jpg",
     "delay": "",
     "postsPerPage": "",
     "googleAnalytics": "",
     "disqus": "willcrisis-site"
   },
   "socialnetwork": {
-    "email": "",
-    "github": "",
-    "twitter": "",
-    "facebook": "",
-    "googleplus": "",
-    "instagram": "",
+    "email": "krause.willian@gmail.com",
+    "github": "willcrisis",
+    "twitter": "willcrisis",
+    "facebook": "willian.krause",
+    "googleplus": "willcrisis",
+    "instagram": "willcrisis",
     "pinterest": "",
     "flickr": "",
-    "linkedin": "",
+    "linkedin": "willian-krause-98b0a996",
     "stackoverflow": ""
   }
 }

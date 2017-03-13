@@ -1,0 +1,66 @@
+= Grails: Mapear enum para um campo Integer em vez de String
+:hp-tags: grails, desenvolvimento, banco de código
+:published_at: 2015-05-08
+
+Quem programa em Grails sabe que há uma certa limitação na hora de mapear enums dentro de uma classe de domínio. O comportamento padrão é que o `key` do valor será salvo no banco. O Grails também dá a opção de mapear o enum de forma `ordinal`, o que também é possível no Hibernate.
+
+Mas imagine o seguinte cenário:
+Você possui uma classe de domínio qualquer que possui um enum indicando um nível de dificuldade, conforme ilustrado abaixo:
+
+[source,groovy]
+----
+class DominioQualquer {
+    NivelEnum nivel
+    
+    static mapping = {
+    	nivel enumType: 'ordinal'
+    }
+}
+
+enum NivelEnum {
+    BAIXO
+    MEDIO
+    ALTO
+}
+----
+
+Neste caso, o Grails irá criar um mapeamento usando um campo inteiro no banco de dados. Mas e se, por algum motivo de força maior, você for forçado a incluir os níveis "Médio-Baixo" e "Médio-alto" ao seu domínio? Para facilitar a visualização do código, estruturaríamos o enum da seguinte forma:
+
+[source,groovy]
+----
+enum NivelEnum {
+	BAIXO
+	MEDIO_BAIXO
+	MEDIO
+	MEDIO_ALTO
+	ALTO
+}
+----
+
+Porém isso iria quebrar os registros já incluídos, pois mudamos a ordem dos valores no enum! Como resolver isso?
+
+image::defender.gif[]
+
+A solução é ridiculamente simples, mas que me tomou muito tempo de pesquisa: basta definir um campo chamado `id` dentro do enum e remover o `enumType` do mapeamento. Dessa forma, o Grails irá usar este campo para persistir no banco, em vez de usar o ordinal. Nosso código então fica assim:
+
+[source,groovy]
+----
+class DominioQualquer {
+    NivelEnum nivel
+}
+
+enum NivelEnum {
+    BAIXO(0)
+    MEDIO_BAIXO(3)
+    MEDIO(1)
+    MEDIO_ALTO(4)
+    ALTO(2)
+    
+    Integer id
+    
+    private NivelEnum(Integer id) {
+        this.id = id
+    }
+}
+----
+Lembrando que o nome do campo PRECISA ser `id`. Já o tipo pode ser qualquer tipo conhecido do Hibernate que estenda `Serializable` (`String`, `Date`, `char`, etc...).

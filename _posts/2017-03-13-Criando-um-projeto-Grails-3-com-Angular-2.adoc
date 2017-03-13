@@ -1,0 +1,162 @@
+= Criando um projeto Grails 3 com Angular 2
+:hp-tags: Grails, Angular, Angular 2, Grails 3, Frontend, Backend, API, REST
+:published_at: 2017-03-13
+
+Desde que comecei a estudar frameworks de Frontend, uma coisa que me incomodou era a necessidade de se precisar de um servidor para o Frontend e outro para o Backend. Em aplicações muito grandes, onde os dois projetos são totalmente separados, é algo que até dá pra entender, mas em projetos menores, é um custo a mais que acaba sendo desnecessário, pois poderíamos aproveitar o servidor onde vamos publicar nosso projeto Backend para servir também o front sem nenhuma configuração adicional.
+
+Por gostar bastante de Grails e do Angular 2, há algum tempo comecei a procurar uma forma de desenvolver um projeto único, mas onde eu pudesse usar as duas tecnologias ao mesmo tempo. Depois de algum tempo de pesquisa, consegui chegar a uma solução que acredito ser simples, porém que atende perfeitamente este cenário.
+
+== Criando o projeto Grails
+
+=== Grails Application Forge
+
+Aproveito aqui pra falar sobre o http://start.grails.org[Grails Application Forge], uma ferramenta magnífica feita pelo pessoal do Grails. Com ela, você pode criar um novo projeto Grails escolhendo quais dependências deseja utilizar, qual a versão do Grails e qual o profile que deseja utilizar no seu projeto. Utilizando o benefício do Gradle Wrapper e do Grails Wrapper, você pode começar seu projeto sem precisar baixar os binários do Grails, sem configurar variáveis de ambiente, e sem precisar rodar o comando `grails create-app`. Basta baixar o arquivo zip gerado, extrair e rodar o comando `gradlew bootRun` dentro da pasta do projeto. Com isso, eliminamos problemas de versões diferentes no ambiente de desenvolvimento.
+
+=== Criando o projeto
+
+Prosseguindo com o projeto, criei um novo projeto usando o profile `rest-api`. Pode ser criado tanto via linha de comando quanto pelo Grails Application Forge que citei acima. Eu utilizei o Application Forge, pois facilita muito na hora de montar um novo ambiente. 
+
+Caso prefira criar o projeto via linha de comando, é só rodar `grails create-app myapp --profile rest-api`
+
+=== Alterando as configurações
+
+Precisamos alterar alguns arquivos de configuração para nosso projeto funcionar com o Angular 2. O primeiro deles é o `application.yml`. É preciso adicionar a linha `grails.resources.pattern: /**` para indicar que o conteúdo estático gerado pelo Angular será servido a partir da raiz do projeto. Vamos falar um pouco sobre o conteúdo estático já já. O arquivo fica assim:
+
+
+application.yml
+----
+grails:
+    profile: rest-api
+    codegen:
+        defaultPackage: grails3.angular2
+    spring:
+        transactionManagement:
+            proxies: false
+info:
+    app:
+        name: '@info.app.name@'
+        version: '@info.app.version@'
+        grailsVersion: '@info.app.grailsVersion@'
+spring:
+    main:
+        banner-mode: "off"
+    groovy:
+        template:
+            check-template-location: false
+            
+grails.resources.pattern: /**
+
+...
+----
+
+Depois, é preciso alterar também o arquivo `UrlMappings.groovy`. Vamos alterar as URLs dos endpoints colocando o prefixo `api` a elas, e vamos alterar o mapeamento da URL `/` para um arquivo `index.html`. O mapeamento fica assim:
+
+UrlMappings.groovy
+----
+class UrlMappings {
+
+    static mappings = {
+        delete "/api/$controller/$id(.$format)?"(action:"delete")
+        get "/api/$controller(.$format)?"(action:"index")
+        get "/api/$controller/$id(.$format)?"(action:"show")
+        post "/api/$controller(.$format)?"(action:"save")
+        put "/api/$controller/$id(.$format)?"(action:"update")
+        patch "/api/$controller/$id(.$format)?"(action:"patch")
+
+        "/"(redirect: '/index.html')
+        "500"(view: '/error')
+        "404"(view: '/notFound')
+    }
+}
+----
+
+=== Conteúdo estático no Grails
+
+Muitos não sabem, mas é possível servir conteúdo estático em um projeto Grails. Para isso, usamos a pasta `src/main/resources/public` ou a pasta `src/main/webapp`. A vantagem de se usar a primeira pasta é que o conteúdo também é exportado quando se cria um arquivo `.jar`. Já na segunda, o conteúdo só é exportado quando se cria um arquivo `.war`.
+
+Por padrão, o conteúdo estático é servido através da URL `http://servidor:porta/static/`. Ao criarmos a configuração no arquivo `application.yml`, estamos dizendo ao Grails para servir o conteúdo estático através da URL raiz do nosso projeto (`http://servidor:porta/`). Se quiser fazer um teste, crie um arquivo `index.html` qualquer na pasta `src/main/resources/public` e execute o projeto. Antes de adicionar a configuração, este arquivo pode ser visto pela URL `http://localhost:8080/static/index.html`. Após adicionar a configuração, o arquivo pode ser visto na URL `http://localhost:8080/index.html`.
+
+== Criando o projeto Angular 2
+
+Agora vamos criar o projeto Angular 2, que será servido através do mesmo container do projeto Grails.
+
+Precisamos, primeiro de tudo, instalar o https://nodejs.org/en/[Node.js] na máquina. Usaremos também o https://github.com/angular/angular-cli[Angular CLI] para gerar e executar nosso projeto Angular.
+
+=== Instalando o Node
+
+Instalar o Node é bem fácil. É só baixar o executável do site (preferencialmente uma versão acima da 6.9), executar o instalador e pronto. Não esqueça de marcar a opção para adicionar o Node à variável de ambiente `path`.
+
+=== Instalando o Angular CLI
+
+Depois de instalar o node, é só executar no terminal o comando `npm install -g @angular/cli`. Depois de instalado, será possível executar o comando `ng` no terminal. Para uma lista completa de comandos, execute `ng --help`.
+
+=== Criando o projeto Angular 2
+
+Para criar um projeto Angular 2, usamos o comando `ng new <meu-projeto>`. Vamos executá-lo na pasta um nível acima de onde está nosso projeto Grails, usando o mesmo nome de projeto. Por exemplo, se o seu projeto Grails está na pasta `C:\des\grails3-angular2`, abre um terminal, navegue até a pasta `C:\des` e execute o comando `ng new grails3-angular2`. Pode dar um conflito no arquivo `.gitignore`. Eu recomendo copiar o conteúdo do arquivo do projeto Grails existente para um editor de texto, deixar o Angular CLI sobrescrever o arquivo, e depois colar de volta o conteúdo do arquivo antigo no novo arquivo gerado.
+
+=== Configurando o projeto Angular 2
+
+Depois de criar o projeto, vamos alterar o arquivo `.angular-cli.json`. Vamos alterar o valor da propriedade `outDir` para `src/main/resources/public`. Esse atributo indica onde o Angular CLI vai gerar o código Javascript e HTML do projeto Angular2. Colocamos nesse atributo o caminho da pasta de conteúdo estático do Grails.
+
+O arquivo vai ficar mais ou menos assim:
+
+.angular-cli.json
+----
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "project": {
+    "name": "grails3-angular2"
+  },
+  "apps": [
+    {
+      "root": "src",
+      "outDir": "src/main/resources/public",
+      "assets": [
+        "assets",
+        "favicon.ico"
+      ],
+      "index": "index.html",
+      ....
+    }
+  ]
+  ...
+}
+----
+
+Depois, precisamos alterar também o arquivo `package.json`. Vamos alterar o script `start` para `ng build --watch`. Fica mais ou menos assim:
+
+package.json
+----
+{
+  "name": "grails3-angular2",
+  "version": "0.0.0",
+  "license": "MIT",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng build --watch",
+    "build": "ng build",
+    "test": "ng test",
+    "lint": "ng lint",
+    "e2e": "ng e2e"
+  },
+  ....
+}
+----
+
+== Executando o projeto
+
+Abra um terminal na pasta raiz do projeto. Nesse terminal, execute o comando `npm start`. Isso irá iniciar a construção em tempo real do projeto Angular 2. 
+
+Depois, abra outro terminal também na pasta raiz do projeto, e execute o projeto Grails. Se você está usando o Wrapper, rode `gradlew bootRun`. Se está usando o Grails instalado, rode `grails run-app`.
+
+Ao iniciar, abra o endereço `http://localhost:8080` no navegador. Você deverá ver a página inicial padrão do projeto Angular 2. Como estamos executando a construção em tempo real do Angular 2, caso algum arquivo seja alterado, é só atualizar a página que as alterações já podem ser vistas.
+
+Ao exportar o projeto como JAR ou como WAR, a pasta de conteúdo estático também será exportada, e o projeto pode ser acessado da mesma maneira.
+
+== Conclusão
+
+Sei que muitos vão argumentar que o projeto Front deve ficar separado do projeto Backend, porém esta abordagem é pra quem, assim como eu, quer poder criar um projeto usando os dois frameworks sem ter que criar configurações separadas de servidor.
+
+Se tiver alguma dúvida, pode escrever nos comentários ou me mandar um e-mail.
+
+Aqui tem o código-fonte do projeto hospedado no GitHub: https://github.com/willcrisis/grails3-angular2

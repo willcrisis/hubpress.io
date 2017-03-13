@@ -1,4 +1,44 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Relatos de um Desenvolvedor Aventureiro]]></title><description><![CDATA[Um blog por Willian Krause]]></description><link>http://www.willcrisis.com</link><image><url>https://raw.githubusercontent.com/willcrisis/willcrisis.github.io/master/images/cover/chessboard.jpg</url><title>Relatos de um Desenvolvedor Aventureiro</title><link>http://www.willcrisis.com</link></image><generator>RSS for Node</generator><lastBuildDate>Mon, 13 Mar 2017 14:18:17 GMT</lastBuildDate><atom:link href="http://www.willcrisis.com/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Grails: Sobrescrevendo o UserDetailsService do Spring Security em um plugin]]></title><description><![CDATA[<div class="paragraph">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Relatos de um Desenvolvedor Aventureiro]]></title><description><![CDATA[Um blog por Willian Krause]]></description><link>http://www.willcrisis.com</link><image><url>https://raw.githubusercontent.com/willcrisis/willcrisis.github.io/master/images/cover/chessboard.jpg</url><title>Relatos de um Desenvolvedor Aventureiro</title><link>http://www.willcrisis.com</link></image><generator>RSS for Node</generator><lastBuildDate>Mon, 13 Mar 2017 14:19:29 GMT</lastBuildDate><atom:link href="http://www.willcrisis.com/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Movendo um repositório do BitBucket para o GitHub (ou vice-versa)]]></title><description><![CDATA[<div class="paragraph">
+<p>Utilizo o <a href="http://bitbucket.org">BitBucket</a> há algum tempo por causa da possibilidade de criar repositórios privados grátis sem muita complicação, e também por ele ter integração com o <a href="http://codeship.com">Codeship</a> (ainda pretendo escrever um post sobre ele). Mas decidi abrir alguns dos meus projetos particulares após começar a participar da comunidade um pouco mais ativamente. Por isso, optei por mover esses projetos abertos para o <a href="http://github.com">GitHub</a> devido à maior popularidade deste para projetos opensource. Pensei que teria dificuldade, que seria muito complicado transferir todo o histórico de commits e etc, mas é uma tarefa muito mais simples do que parece.</p>
+</div>
+<div class="paragraph">
+<p>Primeiro de tudo é preciso criar o novo repositório no GitHub. Dentro da sua página de perfil, abra a aba "Repositories" e clique no botão "New". Assim:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="http://www.willcrisis.com/images/github-create-repo.jpg" alt="Criando repositório no GitHub">
+</div>
+</div>
+<div class="paragraph">
+<p>Tenha o cuidado de desmarcar a opção "Initialize this repository with a README" enquanto cria o repositório. Dessa forma, o GitHub vai criar um repositório totalmente vazio.</p>
+</div>
+<div class="paragraph">
+<p>Depois, copie a URL do repositório criado. Dentro da pasta onde você já possui o projeto hospedado no BitBucket clonado, execute os seguintes comandos:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>$ git remote rename origin bitbucket
+$ git remote add origin &lt;URL do repositório criado&gt;
+$ git push origin master</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Pronto! Todo o repositório do BitBucket vai ser copiado para o GitHub, inclusive mantendo o histórico de commits. Se desejar remover totalmente o projeto do BitBucket, execute também:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>$ git remote rm bitbucket</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>É possível também fazer o processo inverso, movendo um projeto do GitHub para o BitBucket. Basta inverter a ordem dos repositórios utilizados.</p>
+</div>
+<div class="paragraph">
+<p>Não cheguei a testar, mas acho que esses comandos funcionam para migrar para qualquer outro repositório Git (GitHub, BitBucket, GitLab, etc).</p>
+</div>
+<div class="paragraph">
+<p>Se tiver interesse, confere lá o meu perfil no <a href="https://github.com/willcrisis">GitHub</a> e no <a href="https://bitbucket.org/willcrisis/">BitBucket</a> pra ver alguns projetos que eu desenvolvi! Sinta-se a vontade para fazer forks! Se ver alguma coisa que possa melhorar, manda um pull request!</p>
+</div>]]></description><link>http://www.willcrisis.com/2015/10/21/Movendo-um-repositorio-do-Bit-Bucket-para-o-Git-Hub-ou-vice-versa.html</link><guid isPermaLink="true">http://www.willcrisis.com/2015/10/21/Movendo-um-repositorio-do-Bit-Bucket-para-o-Git-Hub-ou-vice-versa.html</guid><category><![CDATA[desenvolvimento]]></category><category><![CDATA[ git]]></category><category><![CDATA[ github]]></category><category><![CDATA[ bitbucket]]></category><category><![CDATA[ opensource]]></category><dc:creator><![CDATA[Willian Krause]]></dc:creator><pubDate>Wed, 21 Oct 2015 00:00:00 GMT</pubDate></item><item><title><![CDATA[Grails: Sobrescrevendo o UserDetailsService do Spring Security em um plugin]]></title><description><![CDATA[<div class="paragraph">
 <p>Recentemente comecei a implementar alguns plugins para encapsular as lógicas comuns entre as aplicações que desenvolvo usando Grails. Uma dessas lógicas é a de segurança, onde eu adiciono alguns campos às classes do Spring Security e mais alguns recursos de cadastro (envio de e-mails ao usuário cadastrado, recurso de "esqueci minha senha", etc). Decidi escrever então um plugin que teria o SpringSecurityCore como dependência, e dentro dele eu definiria toda a minha lógica para ser reaproveitada em outros projetos.</p>
 </div>
 <div class="paragraph">

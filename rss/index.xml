@@ -1,6 +1,106 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Relatos de um Desenvolvedor Aventureiro]]></title><description><![CDATA[Um blog por Willian Krause]]></description><link>http://www.willcrisis.com</link><image><url>https://raw.githubusercontent.com/willcrisis/willcrisis.github.io/master/images/cover/chessboard.jpg</url><title>Relatos de um Desenvolvedor Aventureiro</title><link>http://www.willcrisis.com</link></image><generator>RSS for Node</generator><lastBuildDate>Mon, 13 Mar 2017 13:45:08 GMT</lastBuildDate><atom:link href="http://www.willcrisis.com/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Teste]]></title><description><![CDATA[<div class="paragraph">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Relatos de um Desenvolvedor Aventureiro]]></title><description><![CDATA[Um blog por Willian Krause]]></description><link>http://www.willcrisis.com</link><image><url>https://raw.githubusercontent.com/willcrisis/willcrisis.github.io/master/images/cover/chessboard.jpg</url><title>Relatos de um Desenvolvedor Aventureiro</title><link>http://www.willcrisis.com</link></image><generator>RSS for Node</generator><lastBuildDate>Mon, 13 Mar 2017 14:15:17 GMT</lastBuildDate><atom:link href="http://www.willcrisis.com/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Teste]]></title><description><![CDATA[<div class="paragraph">
 <p>Isso é um teste</p>
-</div>]]></description><link>http://www.willcrisis.com/2017/03/13/Teste.html</link><guid isPermaLink="true">http://www.willcrisis.com/2017/03/13/Teste.html</guid><dc:creator><![CDATA[Willian Krause]]></dc:creator><pubDate>Mon, 13 Mar 2017 00:00:00 GMT</pubDate></item><item><title><![CDATA[Grails: Rodando duas aplicações na mesma instância do Tomcat em subdomínios diferentes]]></title><description><![CDATA[<div class="paragraph">
+</div>]]></description><link>http://www.willcrisis.com/2017/03/13/Teste.html</link><guid isPermaLink="true">http://www.willcrisis.com/2017/03/13/Teste.html</guid><dc:creator><![CDATA[Willian Krause]]></dc:creator><pubDate>Mon, 13 Mar 2017 00:00:00 GMT</pubDate></item><item><title><![CDATA[Grails: Internacionalização em banco de dados e arquivos]]></title><description><![CDATA[<div class="paragraph">
+<p>Fala, pessoal!</p>
+</div>
+<div class="paragraph">
+<p>Estive pesquisando uma forma de gravar internacionalização em banco de dados para permitir que alguns textos da minha aplicação sejam alterados sem a necessidade de precisar subir uma nova versão no servidor, mas continuando a usar as chaves definidas nos arquivos <code>messages_*.properties</code> caso o texto não esteja definido no banco.</p>
+</div>
+<div class="paragraph">
+<p>Depois de ver <a href="http://graemerocher.blogspot.com.br/2010/04/reading-i18n-messages-from-database.html">esse</a> e <a href="http://stackoverflow.com/questions/8100312/grails-i18n-from-database-but-default-back-to-file">esse</a> post, pude fazer esse esquema funcionar perfeitamente.</p>
+</div>
+<div class="paragraph">
+<p>Primeiro de tudo, é preciso criar uma classe de domínio para armazenar os valores no banco:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">class Mensagem {
+    String code
+    Locale locale
+    String text
+
+    static mapping = {
+        cache true
+        columns {
+            code index: 'idx_message_key'
+            locale index: 'idx_message_key'
+        }
+    }
+
+    String toString() {
+        text
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Criei um índice para tornar a busca das mensagens mais rápida.</p>
+</div>
+<div class="paragraph">
+<p>Depois, foi preciso criar a classe <code>DatabaseMessageSource</code> estendendo a classe <code>AbstractMessageSource</code>, que será a classe responsável por fazer a pesquisa no banco de dados e, caso não encontre um valor, retornar a chave definida em arquivo:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">class DatabaseMessageSource extends AbstractMessageSource {
+
+    Ehcache messageCache
+    def messageBundleMessageSource
+
+    @Override
+    protected MessageFormat resolveCode(String code, Locale locale) {
+        def key = new MessageKey(code, locale)
+        def format = messageCache.get(key)?.value
+        if (!format) {
+            Mensagem mensagem = Mensagem.findByCodeAndLocale(code, locale)
+
+            if (mensagem ) {
+                format = new MessageFormat(mensagem.text, mensagem.locale)
+            } else {
+                format = messageBundleMessageSource.resolveCode(code, locale)
+            }
+            messageCache.put(new Element(key, format))
+        }
+        return format
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Usei o EhCache para evitar que a cada exibição de página seja feita uma consulta no banco retornando os valores já encontrados em execuções anteriores, poupando assim uma quantidade razoável de recursos do servidor. Para configurar esse cache corretamente, primeiro é preciso criar a classe <code>MessageKey</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">@Immutable
+class MessageKey implements Serializable {
+    String code
+    Locale locale
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Depois, é preciso dizer ao Spring para carregar os beans que acabamos de criar no <code>resources.groovy</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">messageCache(EhCacheFactoryBean) {
+    timeToLive = 500
+    // outras configurações de cache
+}
+messageSource(DatabaseMessageSource) {
+    messageCache = messageCache
+    messageBundleMessageSource = ref("messageBundleMessageSource")
+}
+messageBundleMessageSource(org.codehaus.groovy.grails.context.support.PluginAwareResourceBundleMessageSource) {
+    basenames = "WEB-INF/grails-app/i18n/messages"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Usamos a classe <code>PluginAwareResourceBundleMessageSource</code> porque, segundo <a href="http://stackoverflow.com/a/8204148">este</a> comentário, algumas mensagens de plugins podem ser ignoradas caso usemos alguma outra classe aqui.</p>
+</div>
+<div class="paragraph">
+<p>Depois de fazer essa configuração, basta fazer o teste. Eu gerei o controlador e páginas para a classe <code>Mensagem</code> usando o comando <code>grails generate-all pacote.Mensagem</code>. Depois é só fazer os testes usando a tag <code>&lt;g:message&gt;</code> nas GSPs e a action <code>message(args)</code> nos controladores, e pronto! Sempre que for preciso sobrescrever um texto no sistema, basta criar um registro na tabela <code>Mensagem</code> e imediatamente a mensagem estará disponível, sem a necessidade de precisar subir uma nova versão da aplicação!// = Your Blog title</p>
+</div>]]></description><link>http://www.willcrisis.com/2015/06/19/Grails-Internacionalizacao-em-banco-de-dados-e-arquivos.html</link><guid isPermaLink="true">http://www.willcrisis.com/2015/06/19/Grails-Internacionalizacao-em-banco-de-dados-e-arquivos.html</guid><category><![CDATA[grails]]></category><category><![CDATA[ desenvolvimento]]></category><category><![CDATA[ banco de código]]></category><dc:creator><![CDATA[Willian Krause]]></dc:creator><pubDate>Fri, 19 Jun 2015 00:00:00 GMT</pubDate></item><item><title><![CDATA[Grails: Rodando duas aplicações na mesma instância do Tomcat em subdomínios diferentes]]></title><description><![CDATA[<div class="paragraph">
 <p>Recentemente precisei fazer deploy de duas aplicações Grails na mesma instância do Tomcat. Tudo seria simples, se não fosse o fato de que cada aplicação seria acessada pelo seu próprio subdomínio, e que a URL deveria ser algo parecido com <a href="http://aplicacao1.meudominio.com/controller/id" class="bare">http://aplicacao1.meudominio.com/controller/id</a></p>
 </div>
 <div class="paragraph">

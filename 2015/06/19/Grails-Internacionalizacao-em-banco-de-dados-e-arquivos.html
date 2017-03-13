@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>Grails: Internacionalização em banco de dados e arquivos</title>
+    <meta name="description" content="" />
+
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="shortcut icon" href="http://www.willcrisis.com/favicon.ico">
+
+    <link rel="stylesheet" type="text/css" href="//www.willcrisis.com/themes/casper/assets/css/screen.css?v=1489414517085" />
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400" />
+
+    <link rel="canonical" href="http://www.willcrisis.com/2015/06/19/Grails-Internacionalizacao-em-banco-de-dados-e-arquivos.html" />
+    <meta name="referrer" content="origin" />
+    
+    <meta property="og:site_name" content="Relatos de um Desenvolvedor Aventureiro" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Grails: Internacionalização em banco de dados e arquivos" />
+    <meta property="og:description" content="Fala, pessoal! Estive pesquisando uma forma de gravar internacionalização em banco de dados para permitir que alguns textos da minha aplicação sejam alterados sem a necessidade de precisar subir uma nova versão no servidor, mas continuando a usar as chaves definidas nos arquivos messages_*.properties caso o texto não esteja" />
+    <meta property="og:url" content="http://www.willcrisis.com/2015/06/19/Grails-Internacionalizacao-em-banco-de-dados-e-arquivos.html" />
+    <meta property="article:published_time" content="2015-06-19T00:00:00.000Z" />
+    <meta property="article:tag" content="grails" />
+    <meta property="article:tag" content=" desenvolvimento" />
+    <meta property="article:tag" content=" banco de código" />
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Grails: Internacionalização em banco de dados e arquivos" />
+    <meta name="twitter:description" content="Fala, pessoal! Estive pesquisando uma forma de gravar internacionalização em banco de dados para permitir que alguns textos da minha aplicação sejam alterados sem a necessidade de precisar subir uma nova versão no servidor, mas continuando a usar as chaves definidas nos arquivos messages_*.properties caso o texto não esteja" />
+    <meta name="twitter:url" content="http://www.willcrisis.com/2015/06/19/Grails-Internacionalizacao-em-banco-de-dados-e-arquivos.html" />
+    
+    <script type="application/ld+json">
+{
+    "@context": "http://schema.org",
+    "@type": "Article",
+    "publisher": "Relatos de um Desenvolvedor Aventureiro",
+    "author": {
+        "@type": "Person",
+        "name": "Willian Krause",
+        "image": "https://avatars1.githubusercontent.com/u/1250489?v=3",
+        "url": "http://www.willcrisis.com/author/willcrisis/",
+        "sameAs": "http://www.willcrisis.com"
+    },
+    "headline": "Grails: Internacionalização em banco de dados e arquivos",
+    "url": "http://www.willcrisis.com/2015/06/19/Grails-Internacionalizacao-em-banco-de-dados-e-arquivos.html",
+    "datePublished": "2015-06-19T00:00:00.000Z",
+    "keywords": "grails,  desenvolvimento,  banco de código",
+    "description": "Fala, pessoal! Estive pesquisando uma forma de gravar internacionalização em banco de dados para permitir que alguns textos da minha aplicação sejam alterados sem a necessidade de precisar subir uma nova versão no servidor, mas continuando a usar as chaves definidas nos arquivos messages_*.properties caso o texto não esteja"
+}
+    </script>
+
+    <meta name="generator" content="HubPress" />
+    <link rel="alternate" type="application/rss+xml" title="Relatos de um Desenvolvedor Aventureiro" href="http://www.willcrisis.com/rss/" />
+</head>
+<body class="post-template tag-grails tag-desenvolvimento tag-banco-de-codigo nav-closed">
+
+    
+
+    <div class="site-wrapper">
+
+        
+
+
+<header class="main-header post-head no-cover">
+    <nav class="main-nav  clearfix">
+        
+    </nav>
+</header>
+
+<main class="content" role="main">
+    <article class="post tag-grails tag-desenvolvimento tag-banco-de-codigo">
+
+        <header class="post-header">
+            <h1 class="post-title">Grails: Internacionalização em banco de dados e arquivos</h1>
+            <section class="post-meta">
+                <time class="post-date" datetime="2015-06-19">19 June 2015</time>  on <a href="http://www.willcrisis.com/tag/grails/">grails</a>, <a href="http://www.willcrisis.com/tag/desenvolvimento/"> desenvolvimento</a>, <a href="http://www.willcrisis.com/tag/banco-de-codigo/"> banco de código</a>
+            </section>
+        </header>
+
+        <section class="post-content">
+            <div class="paragraph">
+<p>Fala, pessoal!</p>
+</div>
+<div class="paragraph">
+<p>Estive pesquisando uma forma de gravar internacionalização em banco de dados para permitir que alguns textos da minha aplicação sejam alterados sem a necessidade de precisar subir uma nova versão no servidor, mas continuando a usar as chaves definidas nos arquivos <code>messages_*.properties</code> caso o texto não esteja definido no banco.</p>
+</div>
+<div class="paragraph">
+<p>Depois de ver <a href="http://graemerocher.blogspot.com.br/2010/04/reading-i18n-messages-from-database.html">esse</a> e <a href="http://stackoverflow.com/questions/8100312/grails-i18n-from-database-but-default-back-to-file">esse</a> post, pude fazer esse esquema funcionar perfeitamente.</p>
+</div>
+<div class="paragraph">
+<p>Primeiro de tudo, é preciso criar uma classe de domínio para armazenar os valores no banco:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">class Mensagem {
+    String code
+    Locale locale
+    String text
+
+    static mapping = {
+        cache true
+        columns {
+            code index: 'idx_message_key'
+            locale index: 'idx_message_key'
+        }
+    }
+
+    String toString() {
+        text
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Criei um índice para tornar a busca das mensagens mais rápida.</p>
+</div>
+<div class="paragraph">
+<p>Depois, foi preciso criar a classe <code>DatabaseMessageSource</code> estendendo a classe <code>AbstractMessageSource</code>, que será a classe responsável por fazer a pesquisa no banco de dados e, caso não encontre um valor, retornar a chave definida em arquivo:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">class DatabaseMessageSource extends AbstractMessageSource {
+
+    Ehcache messageCache
+    def messageBundleMessageSource
+
+    @Override
+    protected MessageFormat resolveCode(String code, Locale locale) {
+        def key = new MessageKey(code, locale)
+        def format = messageCache.get(key)?.value
+        if (!format) {
+            Mensagem mensagem = Mensagem.findByCodeAndLocale(code, locale)
+
+            if (mensagem ) {
+                format = new MessageFormat(mensagem.text, mensagem.locale)
+            } else {
+                format = messageBundleMessageSource.resolveCode(code, locale)
+            }
+            messageCache.put(new Element(key, format))
+        }
+        return format
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Usei o EhCache para evitar que a cada exibição de página seja feita uma consulta no banco retornando os valores já encontrados em execuções anteriores, poupando assim uma quantidade razoável de recursos do servidor. Para configurar esse cache corretamente, primeiro é preciso criar a classe <code>MessageKey</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">@Immutable
+class MessageKey implements Serializable {
+    String code
+    Locale locale
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Depois, é preciso dizer ao Spring para carregar os beans que acabamos de criar no <code>resources.groovy</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">messageCache(EhCacheFactoryBean) {
+    timeToLive = 500
+    // outras configurações de cache
+}
+messageSource(DatabaseMessageSource) {
+    messageCache = messageCache
+    messageBundleMessageSource = ref("messageBundleMessageSource")
+}
+messageBundleMessageSource(org.codehaus.groovy.grails.context.support.PluginAwareResourceBundleMessageSource) {
+    basenames = "WEB-INF/grails-app/i18n/messages"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Usamos a classe <code>PluginAwareResourceBundleMessageSource</code> porque, segundo <a href="http://stackoverflow.com/a/8204148">este</a> comentário, algumas mensagens de plugins podem ser ignoradas caso usemos alguma outra classe aqui.</p>
+</div>
+<div class="paragraph">
+<p>Depois de fazer essa configuração, basta fazer o teste. Eu gerei o controlador e páginas para a classe <code>Mensagem</code> usando o comando <code>grails generate-all pacote.Mensagem</code>. Depois é só fazer os testes usando a tag <code>&lt;g:message&gt;</code> nas GSPs e a action <code>message(args)</code> nos controladores, e pronto! Sempre que for preciso sobrescrever um texto no sistema, basta criar um registro na tabela <code>Mensagem</code> e imediatamente a mensagem estará disponível, sem a necessidade de precisar subir uma nova versão da aplicação!// = Your Blog title</p>
+</div>
+        </section>
+
+        <footer class="post-footer">
+
+
+            <figure class="author-image">
+                <a class="img" href="http://www.willcrisis.com/author/willcrisis/" style="background-image: url(https://avatars1.githubusercontent.com/u/1250489?v&#x3D;3)"><span class="hidden">Willian Krause's Picture</span></a>
+            </figure>
+
+            <section class="author">
+                <h4><a href="http://www.willcrisis.com/author/willcrisis/">Willian Krause</a></h4>
+
+                    <p>Read <a href="http://www.willcrisis.com/author/willcrisis/">more posts</a> by this author.</p>
+                <div class="author-meta">
+                    <span class="author-location icon-location">Goiania, GO, Brazil</span>
+                    <span class="author-link icon-link"><a href="http://www.willcrisis.com">http://www.willcrisis.com</a></span>
+                </div>
+            </section>
+
+
+            <section class="share">
+                <h4>Share this post</h4>
+                <a class="icon-twitter" href="https://twitter.com/intent/tweet?text=Grails%3A%20Internacionaliza%C3%A7%C3%A3o%20em%20banco%20de%20dados%20e%20arquivos&amp;url=http://www.willcrisis.com/2015/06/19/Grails-Internacionalizacao-em-banco-de-dados-e-arquivos.html"
+                    onclick="window.open(this.href, 'twitter-share', 'width=550,height=235');return false;">
+                    <span class="hidden">Twitter</span>
+                </a>
+                <a class="icon-facebook" href="https://www.facebook.com/sharer/sharer.php?u=http://www.willcrisis.com/2015/06/19/Grails-Internacionalizacao-em-banco-de-dados-e-arquivos.html"
+                    onclick="window.open(this.href, 'facebook-share','width=580,height=296');return false;">
+                    <span class="hidden">Facebook</span>
+                </a>
+                <a class="icon-google-plus" href="https://plus.google.com/share?url=http://www.willcrisis.com/2015/06/19/Grails-Internacionalizacao-em-banco-de-dados-e-arquivos.html"
+                   onclick="window.open(this.href, 'google-plus-share', 'width=490,height=530');return false;">
+                    <span class="hidden">Google+</span>
+                </a>
+            </section>
+
+        </footer>
+
+
+        <section class="post-comments">
+          <div id="disqus_thread"></div>
+          <script type="text/javascript">
+          var disqus_shortname = 'willcrisis-site'; // required: replace example with your forum shortname
+          /* * * DON'T EDIT BELOW THIS LINE * * */
+          (function() {
+            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+          })();
+          </script>
+          <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+          <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+        </section>
+
+
+    </article>
+
+</main>
+
+<aside class="read-next">
+</aside>
+
+
+
+        <footer class="site-footer clearfix">
+            <section class="copyright"><a href="http://www.willcrisis.com">Relatos de um Desenvolvedor Aventureiro</a> &copy; 2017</section>
+            <section class="poweredby">Proudly published with <a href="http://hubpress.io">HubPress</a></section>
+        </footer>
+
+    </div>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js?v="></script> <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js?v="></script> 
+      <script type="text/javascript">
+        jQuery( document ).ready(function() {
+          // change date with ago
+          jQuery('ago.ago').each(function(){
+            var element = jQuery(this).parent();
+            element.html( moment(element.text()).fromNow());
+          });
+        });
+
+        hljs.initHighlightingOnLoad();
+      </script>
+       
+    <script src='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+
+    <script type="text/javascript" src="//www.willcrisis.com/themes/casper/assets/js/jquery.fitvids.js?v=1489414517085"></script>
+    <script type="text/javascript" src="//www.willcrisis.com/themes/casper/assets/js/index.js?v=1489414517085"></script>
+
+</body>
+</html>

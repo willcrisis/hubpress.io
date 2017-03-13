@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Relatos de um Desenvolvedor Aventureiro]]></title><description><![CDATA[Um blog por Willian Krause]]></description><link>http://www.willcrisis.com</link><image><url>https://raw.githubusercontent.com/willcrisis/willcrisis.github.io/master/images/cover/chessboard.jpg</url><title>Relatos de um Desenvolvedor Aventureiro</title><link>http://www.willcrisis.com</link></image><generator>RSS for Node</generator><lastBuildDate>Mon, 13 Mar 2017 14:23:13 GMT</lastBuildDate><atom:link href="http://www.willcrisis.com/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Hubpress: Usando o Travis-CI para gerar feed RSS]]></title><description><![CDATA[<div class="paragraph">
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[Relatos de um Desenvolvedor Aventureiro]]></title><description><![CDATA[Um blog por Willian Krause]]></description><link>http://www.willcrisis.com</link><image><url>https://raw.githubusercontent.com/willcrisis/willcrisis.github.io/master/images/cover/chessboard.jpg</url><title>Relatos de um Desenvolvedor Aventureiro</title><link>http://www.willcrisis.com</link></image><generator>RSS for Node</generator><lastBuildDate>Mon, 13 Mar 2017 14:25:19 GMT</lastBuildDate><atom:link href="http://www.willcrisis.com/rss/" rel="self" type="application/rss+xml"/><ttl>60</ttl><item><title><![CDATA[Hubpress: Usando o Travis-CI para gerar feed RSS]]></title><description><![CDATA[<div class="paragraph">
 <p>Assim que descobri a existência do <a href="http://hubpress.io">Hubpress</a>, tive vontade imediata de migrar todo o conteúdo do meu site para ele, na intenção de centralizar minhas experiências todas no GitHub. Porém, logo de cara, percebi um grande problema: ele não gera o feed RSS dos artigos nativamente.</p>
 </div>
 <div class="paragraph">
@@ -133,7 +133,41 @@ env:
 </div>
 <div class="paragraph">
 <p>Após seguir todos os passos, basta adicionar um novo post na área administrativa do seu blog e ver a mágica acontecendo no Travis!</p>
-</div>]]></description><link>http://www.willcrisis.com/2017/03/13/Hubpress-Usando-o-Travis-CI-para-gerar-feed-RSS.html</link><guid isPermaLink="true">http://www.willcrisis.com/2017/03/13/Hubpress-Usando-o-Travis-CI-para-gerar-feed-RSS.html</guid><category><![CDATA[hubpress]]></category><category><![CDATA[ desenvolvimento]]></category><category><![CDATA[ github]]></category><category><![CDATA[ travis-ci]]></category><category><![CDATA[ travis]]></category><dc:creator><![CDATA[Willian Krause]]></dc:creator><pubDate>Mon, 13 Mar 2017 00:00:00 GMT</pubDate></item><item><title><![CDATA[De casa nova]]></title><description><![CDATA[<div class="paragraph">
+</div>]]></description><link>http://www.willcrisis.com/2015/10/23/Hubpress-Usando-o-Travis-CI-para-gerar-feed-RSS.html</link><guid isPermaLink="true">http://www.willcrisis.com/2015/10/23/Hubpress-Usando-o-Travis-CI-para-gerar-feed-RSS.html</guid><category><![CDATA[hubpress]]></category><category><![CDATA[ desenvolvimento]]></category><category><![CDATA[ github]]></category><category><![CDATA[ travis-ci]]></category><category><![CDATA[ travis]]></category><dc:creator><![CDATA[Willian Krause]]></dc:creator><pubDate>Fri, 23 Oct 2015 00:00:00 GMT</pubDate></item><item><title><![CDATA[Módulos para Angular JS]]></title><description><![CDATA[<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Nossa&#8230;&#8203; Quanto tempo desde a última vez que apareci por aqui!</p>
+</div>
+<div class="paragraph">
+<p>Esse post é pra falar sobre alguns projetos que venho desenvolvendo para AngularJS.</p>
+</div>
+<div class="paragraph">
+<p>Nos últimos meses, comecei a trabalhar efetivamente com Angular 1, e diante de algumas necessidades bem específicas dos projetos nos quais trabalhei, me vi obrigado a desenvolver alguns módulos para facilitar a implementação dessas necessidades. Com isso, surgiram alguns projetos que visam facilitar a vida de nós, desenvolvedores apertados por prazos minúsculos.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="__a_href_https_github_com_willcrisis_angular_auth_angular_auth_a"><a href="https://github.com/willcrisis/angular-auth">Angular Auth</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Esse foi o meu primeiro módulo criado para o AngularJS 1. É um módulo para encapsular as regras de autenticação e autorização do projeto. Com ele, é só configurar alguns atributos e informar uma URL de backend que a autenticação já estará funcionando. Também suporta validação de regras por Papéis (Roles), que podem ser definidas direto no State (ele depende do fenomenal <a href="https://github.com/angular-ui/ui-router">Ui-Router</a>). Aí no <a href="https://github.com/willcrisis/angular-auth">link</a> tem as informações de instalação e configuração. Também estou evoluindo ele para trabalhar em conjunto com o Firebase, mas essa integração ainda é experimental.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="__a_href_https_github_com_willcrisis_angular_select2_angular_select2_a"><a href="https://github.com/willcrisis/angular-select2">Angular Select2</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Esse projeto nasceu a partir da necessidade de implementar Selects usando o <a href="https://select2.github.io/">Select2</a>. Encontrei alguns módulos para Angular que fazem isso, mas achei a complexidade deles muito grande para uma coisa tão simples. Por isso decidi implementar minha própria solução. Compartilhei a mesma no GitHub caso alguém também queira uma solução simples pra esse problema.</p>
+</div>
+<div class="sect2">
+<h3 id="_ajude_a_melhorar">Ajude a melhorar!</h3>
+<div class="paragraph">
+<p>Se você interessar em algum desses projetos, sinta-se a vontade para abrir Issues ou fazer um fork! Não deixe de fazer seu PR!!</p>
+</div>
+</div>
+</div>
+</div>]]></description><link>http://www.willcrisis.com/2016/06/10/Modulos-para-Angular-JS.html</link><guid isPermaLink="true">http://www.willcrisis.com/2016/06/10/Modulos-para-Angular-JS.html</guid><category><![CDATA[AngularJS]]></category><category><![CDATA[ Plugins]]></category><category><![CDATA[ OpenSource]]></category><category><![CDATA[ GitHub]]></category><category><![CDATA[ Módulos]]></category><dc:creator><![CDATA[Willian Krause]]></dc:creator><pubDate>Fri, 10 Jun 2016 00:00:00 GMT</pubDate></item><item><title><![CDATA[De casa nova]]></title><description><![CDATA[<div class="paragraph">
 <p>O Willcrisis.com está de casa nova!!! Agora hospedado no Github Pages usando o magnífico <a href="http://hubpress.io">Hubpress</a>.</p>
 </div>]]></description><link>http://www.willcrisis.com/2015/11/11/De-casa-nova.html</link><guid isPermaLink="true">http://www.willcrisis.com/2015/11/11/De-casa-nova.html</guid><dc:creator><![CDATA[Willian Krause]]></dc:creator><pubDate>Wed, 11 Nov 2015 00:00:00 GMT</pubDate></item><item><title><![CDATA[Movendo um repositório do BitBucket para o GitHub (ou vice-versa)]]></title><description><![CDATA[<div class="paragraph">
 <p>Utilizo o <a href="http://bitbucket.org">BitBucket</a> há algum tempo por causa da possibilidade de criar repositórios privados grátis sem muita complicação, e também por ele ter integração com o <a href="http://codeship.com">Codeship</a> (ainda pretendo escrever um post sobre ele). Mas decidi abrir alguns dos meus projetos particulares após começar a participar da comunidade um pouco mais ativamente. Por isso, optei por mover esses projetos abertos para o <a href="http://github.com">GitHub</a> devido à maior popularidade deste para projetos opensource. Pensei que teria dificuldade, que seria muito complicado transferir todo o histórico de commits e etc, mas é uma tarefa muito mais simples do que parece.</p>

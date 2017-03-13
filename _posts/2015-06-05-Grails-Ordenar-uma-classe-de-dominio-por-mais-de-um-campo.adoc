@@ -1,0 +1,30 @@
+= Grails: Ordenar uma classe de domínio por mais de um campo
+:hp-tags: desenvolvimento, grails, banco de código
+:published_at: 2015-06-05
+
+Muitas vezes precisamos que os registros de uma classe de domínio venham ordenados por um determinado campo na listagem padrão. Isso é fácil de fazer em Grails! Basta definir o atributo `sort` dentro da seção `mapping` da nossa classe.
+
+[script,groovy]
+----
+static mapping = {
+    sort 'campo'
+}
+----
+
+Se precisarmos especificar a ordem (ascendente ou descendente), também é bem simples:
+[script,groovy]
+----
+static mapping = {
+    sort campo: 'asc' //ou 'desc'
+}
+----
+
+Mas como fazer para ordenar por dois campos ao mesmo tempo? Simples também:
+[script,groovy]
+----
+static mapping = {
+    sort campo: 'asc', outroCampo: 'asc'
+}
+----
+
+Isso é possível pois o método `sort` definido dentro do bloco `mapping` recebe uma `String` ou um `Map` como parâmetro. Quando recebe um `Map`, ele é inteligente o suficiente para realizar a ordenação por todos os campos e ordens informados.

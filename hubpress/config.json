@@ -35,5 +35,15 @@
     "flickr": "",
     "linkedin": "willian-krause-98b0a996",
     "stackoverflow": ""
+  },
+  "initialisationConfigComponent": {
+    "name": "initialise-configuration",
+    "computed": {},
+    "methods": {},
+    "staticRenderFns": [
+      null,
+      null,
+      null
+    ]
   }
 }
